@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block title %}Point of Sale | SmartShop{% endblock %}
+{% block header_title %}Point of Sale (Billing){% endblock %}
+
+{% block content %}
+<form id="billing-form" method="POST" action="{% url 'generate_bill' %}" class="flex flex-col lg:flex-row gap-6 h-full">
+    {% csrf_token %}
+    
+    <!-- ડાબો ભાગ (Left Panel): ફોર્મ અને પ્રોડક્ટ એડ કરવા માટે -->
+    <div class="w-full lg:w-1/3 flex flex-col gap-6">
+        
+        <!-- કસ્ટમરની વિગતો -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Customer Details</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
+                    <input type="text" name="customer_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
+                    <input type="tel" name="contact_number" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">GST Number (Optional)</label>
+                    <input type="text" name="gst_number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </div>
+        </div>
+
+        <!-- પ્રોડક્ટ એડ કરવા માટેનું બોક્સ (HTMX) -->
+        <div class="bg-indigo-50 rounded-xl shadow-sm p-6 border border-indigo-100">
+            <h3 class="text-lg font-bold text-indigo-900 mb-4">Add Item to Cart</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-indigo-800 mb-1">Select Product</label>
+                    <select id="product_id" name="product_id" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                        <option value="">-- Search & Select --</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }} - ₹{{ product.selling_price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-indigo-800 mb-1">Quantity</label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                </div>
+                <button type="button" 
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2"
+                        hx-post="{% url 'hx_add_bill_item' %}" 
+                        hx-target="#itemTableBody" 
+                        hx-swap="beforeend" 
+                        hx-include="#product_id, #quantity">
+                    <span class="material-icons">add_shopping_cart</span>
+                    Add to Bill
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- જમણો ભાગ (Right Panel): લાઈવ બિલ અને ટેક્સ -->
+    <div class="w-full lg:w-2/3 bg-white rounded-xl shadow-sm flex flex-col border border-gray-100 overflow-hidden">
+        
+        <!-- ટેબલ -->
+        <div class="flex-1 overflow-y-auto min-h-[300px]">
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-gray-50 sticky top-0 border-b border-gray-200">
+                    <tr>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Item</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Subtotal</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="itemTableBody" class="divide-y divide-gray-100">
+                    <!-- HTMX થી અહી ડેટા આવશે -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- નીચેનો ભાગ: ટેક્સ અને ફાઇનલ ટોટલ -->
+        <div class="bg-gray-50 border-t border-gray-200 p-6">
+            <div class="flex flex-col sm:flex-row justify-between items-end gap-4">
+                <div class="flex gap-4 w-full sm:w-auto">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">SGST (%)</label>
+                        <input type="number" id="sgst" name="sgst" value="0" min="0" step="0.01" class="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-indigo-500 text-center bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">CGST (%)</label>
+                        <input type="number" id="cgst" name="cgst" value="0" min="0" step="0.01" class="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-indigo-500 text-center bg-white">
+                    </div>
+                </div>
+                
+                <div class="text-right w-full sm:w-auto">
+                    <p class="text-sm font-medium text-gray-500 mb-1">Grand Total</p>
+                    <input type="text" id="grand_total" name="grand_total" value="0.00" readonly class="text-4xl font-bold text-gray-800 bg-transparent border-none outline-none text-right w-48 pointer-events-none">
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-lg">
+                <span class="material-icons">receipt</span>
+                Generate Invoice
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- JS for Live Total Calculation -->
+<script>
+    function calculateTotal() {
+        const rows = document.querySelectorAll('#itemTableBody tr');
+        let subtotalSum = 0;
+
+        rows.forEach(row => {
+            const subtotalText = row.children[3].innerText.replace('₹', '').trim();
+            subtotalSum += parseFloat(subtotalText) || 0;
+        });
+
+        const sgstRate = parseFloat(document.getElementById('sgst').value) || 0;
+        const cgstRate = parseFloat(document.getElementById('cgst').value) || 0;
+
+        const sgstAmount = subtotalSum * (sgstRate / 100);
+        const cgstAmount = subtotalSum * (cgstRate / 100);
+        const grandTotal = subtotalSum + sgstAmount + cgstAmount;
+
+        document.getElementById('grand_total').value = grandTotal.toFixed(2);
+    }
+
+    document.body.addEventListener('htmx:afterSwap', calculateTotal);
+    document.getElementById('sgst').addEventListener('input', calculateTotal);
+    document.getElementById('cgst').addEventListener('input', calculateTotal);
+</script>
+{% endblock %}

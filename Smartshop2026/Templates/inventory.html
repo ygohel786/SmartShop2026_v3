@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-bold text-gray-800">Stock & Inventory</h2>
+        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition font-medium">
+            + Add New Part
+        </button>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 text-gray-600 border-b border-gray-200 text-sm uppercase tracking-wider">
+                    <th class="p-4 font-semibold">Item Name / Component</th>
+                    <th class="p-4 font-semibold">Category</th>
+                    <th class="p-4 font-semibold">Stock Level</th>
+                    <th class="p-4 font-semibold">Status</th>
+                </tr>
+            </thead>
+            <tbody class="text-gray-700">
+                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                    <td class="p-4 font-medium">Laptop Screens & Batteries</td>
+                    <td class="p-4">Hardware Replacements</td>
+                    <td class="p-4">12 Units</td>
+                    <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">In Stock</span></td>
+                </tr>
+                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
+                    <td class="p-4 font-medium">Logic Board ICs (M2/Samsung)</td>
+                    <td class="p-4">Micro-Components</td>
+                    <td class="p-4">3 Units</td>
+                    <td class="p-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Low Stock</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

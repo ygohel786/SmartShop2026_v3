@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard | SmartShop{% endblock %}
+{% block header_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<!-- ૪ સ્માર્ટ કાર્ડ્સ (Cards) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <!-- કાર્ડ ૧: આજનું વેચાણ -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Today's Sales</p>
+                <h3 class="text-2xl font-bold text-gray-800">₹ 0.00</h3>
+            </div>
+            <div class="h-12 w-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center">
+                <span class="material-icons">payments</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- કાર્ડ ૨: ટોટલ બિલ -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Invoices Generated</p>
+                <h3 class="text-2xl font-bold text-gray-800">0</h3>
+            </div>
+            <div class="h-12 w-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center">
+                <span class="material-icons">receipt_long</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- કાર્ડ ૩: ઓછો સ્ટોક -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Low Stock Items</p>
+                <h3 class="text-2xl font-bold text-red-600">0</h3>
+            </div>
+            <div class="h-12 w-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center">
+                <span class="material-icons">warning</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- કાર્ડ ૪: કુલ પ્રોડક્ટ્સ -->
+    <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 transition hover:shadow-md">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500 mb-1">Total Products</p>
+                <h3 class="text-2xl font-bold text-gray-800">0</h3>
+            </div>
+            <div class="h-12 w-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center">
+                <span class="material-icons">inventory_2</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- નીચેનો મોટો ગ્રાફ અથવા વેલકમ સેક્શન -->
+<div class="bg-white rounded-xl shadow-sm p-8 border border-gray-100 text-center py-16">
+    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-100 text-indigo-600 mb-4">
+        <span class="material-icons text-3xl">storefront</span>
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to your new SmartShop!</h2>
+    <p class="text-gray-500 max-w-md mx-auto">Your POS system is completely upgraded. Start adding products in the Inventory and generating bills in the Point of Sale tab.</p>
+</div>
+{% endblock %}
