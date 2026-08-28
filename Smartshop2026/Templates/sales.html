@@ -38,7 +38,9 @@
                     <select id="product_id" name="product_id" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
                         <option value="">-- Search & Select --</option>
                         {% for product in products %}
-                            <option value="{{ product.id }}">{{ product.name }} - ₹{{ product.selling_price }}</option>
+                            {% if product.current_stock > 0 %}
+                                <option value="{{ product.id }}">{{product.serial_number}} - {{ product.name }} - ₹{{ product.selling_price }}</option>
+                            {% endif %} 
                         {% endfor %}
                     </select>
                 </div>

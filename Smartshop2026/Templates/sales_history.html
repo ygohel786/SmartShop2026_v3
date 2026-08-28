@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-4 md:p-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Sales History / Reports</h2>
+        <a href="{% url 'sales' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium shadow">
+            + Create New Bill
+        </a>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <form method="GET" action="{% url 'sales_history' %}" class="flex flex-wrap gap-4 items-end">
+            <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Start Date</label>
+                <input type="date" name="start_date" value="{{ request.GET.start_date }}" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">End Date</label>
+                <input type="date" name="end_date" value="{{ request.GET.end_date }}" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div class="flex-grow">
+                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Search (Customer, Product, Bill No)</label>
+                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition">Filter</button>
+                <a href="{% url 'sales_history' %}" class="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg font-medium hover:bg-gray-200 transition border">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sales Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-gray-50 text-gray-600 border-b text-sm uppercase">
+                    <th class="p-4 font-semibold">Bill No</th>
+                    <th class="p-4 font-semibold">Date</th>
+                    <th class="p-4 font-semibold">Customer Name</th>
+                    <th class="p-4 font-semibold">Items Sold</th>
+                    <th class="p-4 font-semibold text-right">Grand Total</th>
+                    <th class="p-4 font-semibold text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr class="border-b hover:bg-gray-50 transition">
+                    <td class="p-4 font-bold text-indigo-600">#INV-{{ invoice.id|stringformat:"04d" }}</td>
+                    <td class="p-4">{{ invoice.date|date:"d M Y" }}</td>
+                    <td class="p-4 font-medium text-gray-800">
+                        {{ invoice.customer_name }}
+                        <div class="text-xs text-gray-500">{{ invoice.contact_number }}</div>
+                    </td>
+                    <td class="p-4 text-sm text-gray-600">
+                        {% for item in invoice.items.all %}
+                            {{ item.product.name }} (x{{ item.quantity }})<br>
+                        {% endfor %}
+                    </td>
+                    <td class="p-4 font-bold text-green-600 text-right">₹{{ invoice.grand_total }}</td>
+                    <td class="p-4 text-center">
+                        <a href="{% url 'print_invoice' invoice.id %}" target="_blank" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded hover:bg-indigo-100 transition font-medium text-sm">
+                            <span class="material-icons text-sm">print</span> View / Print
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="p-8 text-center text-gray-500">No sales records found for the selected filters.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

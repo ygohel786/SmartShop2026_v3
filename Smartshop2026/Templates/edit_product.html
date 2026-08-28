@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-4 md:p-8 max-w-3xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-3">Edit Product: <span class="text-indigo-600">{{ product.name }}</span></h2>
+        
+        <form action="{% url 'edit_product' product.id %}" method="POST" class="space-y-5">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+                    <input type="text" name="company_name" value="{{ product.company_name }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Type</label>
+                    <input type="text" name="product_type" value="{{ product.product_type }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Product / Model Name</label>
+                <input type="text" name="name" value="{{ product.name }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Price (₹)</label>
+                    <input type="number" step="0.01" name="purchase_price" value="{{ product.purchase_price }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Margin (%)</label>
+                    <input type="number" step="0.01" name="margin_percentage" value="{{ product.margin_percentage }}" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Storage / RAM / Weight</label>
+                    <input type="text" name="storage" value="{{ product.storage|default_if_none:product.weight|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Color / Size</label>
+                    <input type="text" name="color" value="{{ product.color|default_if_none:product.size|default_if_none:'' }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+            </div>
+            
+            <div class="pt-6 flex justify-end gap-3 border-t">
+                <a href="{% url 'inventory' %}" class="px-5 py-2 text-gray-600 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-lg transition font-medium">Cancel</a>
+                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition font-medium shadow-md">Update Data</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

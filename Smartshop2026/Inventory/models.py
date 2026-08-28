@@ -12,7 +12,19 @@ class Category(models.Model):
 class Product(models.Model):
     shop = models.ForeignKey(ShopUser, on_delete=models.CASCADE, related_name='products')
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    
+    company_name = models.CharField(max_length=150, blank=True, null=True)
+    product_type = models.CharField(max_length=150, blank=True, null=True)
     name = models.CharField(max_length=200)
+    
+    weight = models.CharField(max_length=50, blank=True, null=True)
+    size = models.CharField(max_length=50, blank=True, null=True)
+    storage = models.CharField(max_length=50, blank=True, null=True)
+    color = models.CharField(max_length=50, blank=True, null=True)
+    
+    serial_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    expiry_date = models.DateField(null=True, blank=True)
+    
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2)
     margin_percentage = models.DecimalField(max_digits=5, decimal_places=2)
     
@@ -58,7 +70,6 @@ class InvoiceItem(models.Model):
     def save(self, *args, **kwargs):
         self.sub_total = self.quantity * self.selling_price
         super().save(*args, **kwargs)
-        # વેચાણ થાય ત્યારે આપમેળે સ્ટોક માઈનસ થશે
         StockMovement.objects.create(
             product=self.product,
             movement_type='OUT',

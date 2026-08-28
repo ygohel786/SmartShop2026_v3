@@ -1,39 +1,238 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="p-8">
+<div class="p-4 md:p-8">
     <div class="flex justify-between items-center mb-8">
         <h2 class="text-2xl font-bold text-gray-800">Stock & Inventory</h2>
-        <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition font-medium">
-            + Add New Part
+        <button onclick="document.getElementById('productModal').classList.remove('hidden')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition font-medium flex items-center gap-2">
+            <span class="material-icons">add</span> Add Product
         </button>
     </div>
 
     <!-- Inventory Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full text-left border-collapse">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
                 <tr class="bg-gray-50 text-gray-600 border-b border-gray-200 text-sm uppercase tracking-wider">
-                    <th class="p-4 font-semibold">Item Name / Component</th>
+                    <th class="p-4 font-semibold">SKU / Code & SN</th>
+                    <th class="p-4 font-semibold">Item Name & Details</th>
                     <th class="p-4 font-semibold">Category</th>
                     <th class="p-4 font-semibold">Stock Level</th>
-                    <th class="p-4 font-semibold">Status</th>
+                    <th class="p-4 font-semibold">Price (₹)</th>
+                    <th class="p-4 font-semibold text-center">Actions</th>
                 </tr>
             </thead>
             <tbody class="text-gray-700">
+                {% for product in products %}
                 <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td class="p-4 font-medium">Laptop Screens & Batteries</td>
-                    <td class="p-4">Hardware Replacements</td>
-                    <td class="p-4">12 Units</td>
-                    <td class="p-4"><span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">In Stock</span></td>
+                    <td class="p-4 text-indigo-600 font-mono text-sm font-bold">{{ product.serial_number }}</td>
+                    <td class="p-4">
+                        <div class="font-medium text-gray-800">{{ product.name }}</div>
+                        <div class="text-xs text-gray-500 mt-0.5">
+                            {{ product.company_name }} • {{ product.product_type }}
+                            {% if product.weight or product.color or product.storage or product.size or product.expiry_date %}
+                                <br>
+                                <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-medium">
+                                    {{ product.weight }} {{ product.size }} {{ product.storage }} {{ product.color }}
+                                    {% if product.expiry_date %} | Exp: {{ product.expiry_date|date:"d M Y" }}{% endif %}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="p-4">{{ product.category.name }}</td>
+                    <td class="p-4 font-bold">{{ product.current_stock }} Units</td>
+                    <td class="p-4 text-green-600 font-medium">₹{{ product.selling_price }}</td>
+                    <td class="p-4 flex justify-center gap-2">
+                        <!-- EDIT બટન -->
+                        <a href="{% url 'edit_product' product.id %}" class="text-blue-600 hover:text-blue-900 bg-blue-50 p-2 rounded transition flex items-center justify-center" title="Edit Product">
+                            <span class="material-icons text-sm">edit</span>
+                        </a>
+                        <!-- DELETE બટન -->
+                        <form action="{% url 'delete_product' product.id %}" method="POST" onsubmit="return confirm('તમે ખરેખર આ પ્રોડક્ટ ડિલીટ કરવા માંગો છો?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-600 hover:text-red-900 bg-red-50 p-2 rounded transition flex items-center justify-center" title="Delete Product">
+                                <span class="material-icons text-sm">delete</span>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
-                <tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td class="p-4 font-medium">Logic Board ICs (M2/Samsung)</td>
-                    <td class="p-4">Micro-Components</td>
-                    <td class="p-4">3 Units</td>
-                    <td class="p-4"><span class="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-bold">Low Stock</span></td>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="p-8 text-center text-gray-500">
+                        <span class="material-icons text-4xl mb-2 text-gray-300">inventory_2</span><br>
+                        No products found. Click "Add Product" to add your first item!
+                    </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<!-- Add Product Modal (Pop-up Form) -->
+<div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden animate-fade-in-up">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h3 class="text-lg font-bold text-gray-800">Add New Product</h3>
+            <button type="button" onclick="document.getElementById('productModal').classList.add('hidden')" class="text-gray-400 hover:text-red-500 transition">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        
+        <form action="{% url 'add_product' %}" method="POST" class="p-6 space-y-4 max-h-[85vh] overflow-y-auto">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Company Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="company_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Apple / Samsung">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Type <span class="text-red-500">*</span></label>
+                    <input type="text" name="product_type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. Smartphone">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Model / Name <span class="text-red-500">*</span></label>
+                    <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. iPhone 15">
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- PRODUCT TYPE SELECTION (ફક્ત Electronics/Mobile/IT માટે) -->
+            <!-- ========================================== -->
+            {% if request.user.business_type == 'Electronics' or request.user.business_type == 'Mobile' or request.user.business_type == 'IT' %}
+            <div class="mt-4 pt-2 border-t border-gray-200">
+                <label class="block text-sm font-bold text-gray-800 mb-3">પ્રોડક્ટનો પ્રકાર પસંદ કરો:</label>
+                <div class="flex gap-8">
+                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:bg-indigo-50 transition">
+                        <input type="radio" name="is_serialized" value="true" checked onchange="toggleProductType()" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-sm font-bold text-indigo-900">Serialized (ફોન / લેપટોપ)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 hover:bg-indigo-50 transition">
+                        <input type="radio" name="is_serialized" value="false" onchange="toggleProductType()" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-sm font-bold text-gray-700">Non-Serialized (ચાર્જર / એક્સેસરીઝ)</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- ૧. SERIALIZED વિભાગ (જો 'હા' હોય તો જ દેખાશે) -->
+            <!-- ========================================== -->
+            <div id="serialized_section" class="mt-4">
+                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-lg">
+                    <label class="block text-sm font-bold text-indigo-900 mb-2">Item Details (દરેક ફોન/લેપટોપ માટે અલગ અલગ લાઈન)</label>
+                    
+                    <div id="dynamic_rows" class="space-y-3">
+                        <div class="flex gap-2">
+                            <input type="text" name="imei[]" placeholder="IMEI / SN *" required class="w-1/3 px-3 py-2 border rounded-lg outline-none text-sm font-mono focus:border-indigo-500 bg-white">
+                            <input type="text" name="storage[]" placeholder="Storage (e.g. 128GB)" class="w-1/5 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                            <input type="text" name="color[]" placeholder="Color" class="w-1/5 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                            <input type="number" step="0.01" name="price[]" placeholder="Purchase ₹ *" required class="w-1/4 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <button type="button" onclick="addMoreRow()" class="bg-white border border-indigo-200 text-indigo-700 hover:bg-indigo-600 hover:text-white px-4 py-1.5 rounded-md text-sm font-bold transition flex items-center gap-1 shadow-sm">
+                            <span class="material-icons text-sm">add_circle</span> Add Another Item
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mt-4 w-1/3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Common Margin (%) <span class="text-red-500">*</span></label>
+                    <input type="number" step="0.01" name="margin_percentage" required class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. 15">
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ========================================== -->
+            <!-- ૨. NON-SERIALIZED / OTHER CATEGORY વિભાગ -->
+            <!-- ========================================== -->
+            <div id="nonserialized_section" class="{% if request.user.business_type == 'Electronics' or request.user.business_type == 'Mobile' or request.user.business_type == 'IT' %}hidden mt-4 pt-4 border-t{% else %}mt-4{% endif %}">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1"> Size / Color (Optional)</label>
+                        <!-- બેકએન્ડ પ્રમાણે અહી ns_details નામ રાખ્યું છે -->
+                        <input type="text" name="ns_details" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mt-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Purchase Price (₹) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Margin (%) <span class="text-red-500">*</span></label>
+                        <input type="number" step="0.01" name="margin_percentage_ns" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Initial Stock / Qty <span class="text-red-500">*</span></label>
+                        <input type="number" name="stock" min="1" value="1" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- જાવાસ્ક્રિપ્ટ (Radio Button ટૉગલ અને લાઈન ઉમેરવા માટે) -->
+            <script>
+                function addMoreRow() {
+                    const container = document.getElementById('dynamic_rows');
+                    const row = document.createElement('div');
+                    row.className = 'flex gap-2 mt-3 animate-fade-in-up';
+                    row.innerHTML = `
+                        <!-- અહીં required પાછું લગાવ્યું છે કારણ કે આ Serialized વિભાગ છે -->
+                        <input type="text" name="imei[]" placeholder="IMEI / SN *" required class="w-1/3 px-3 py-2 border rounded-lg outline-none text-sm font-mono focus:border-indigo-500 bg-white">
+                        <input type="text" name="storage[]" placeholder="Storage" class="w-1/5 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                        <input type="text" name="color[]" placeholder="Color" class="w-1/5 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                        <input type="number" step="0.01" name="price[]" placeholder="Purchase ₹ *" required class="w-1/4 px-3 py-2 border rounded-lg outline-none text-sm focus:border-indigo-500 bg-white">
+                    `;
+                    container.appendChild(row);
+                }
+
+                function toggleProductType() {
+                    const isSerialized = document.querySelector('input[name="is_serialized"]:checked')?.value;
+                    const serSection = document.getElementById('serialized_section');
+                    const nonSerSection = document.getElementById('nonserialized_section');
+                    
+                    if (!serSection) return; // જો કેટેગરી Electronics ના હોય તો કશું ન કરો
+
+                    if (isSerialized === 'true') {
+                        // SERIALIZED દેખાડો
+                        serSection.classList.remove('hidden');
+                        nonSerSection.classList.add('hidden');
+                        
+                        // જે દેખાય છે તેના input enable કરો, જે હાઇડ છે તેને disable કરો
+                        serSection.querySelectorAll('input').forEach(el => el.disabled = false);
+                        nonSerSection.querySelectorAll('input').forEach(el => el.disabled = true);
+                    } else {
+                        // NON-SERIALIZED દેખાડો
+                        serSection.classList.add('hidden');
+                        nonSerSection.classList.remove('hidden');
+                        
+                        serSection.querySelectorAll('input').forEach(el => el.disabled = true);
+                        nonSerSection.querySelectorAll('input').forEach(el => el.disabled = false);
+                    }
+                }
+                
+                // જ્યારે પેજ લોડ થાય કે Modal ખુલે ત્યારે એકવાર ચેક કરી લેવું
+                document.addEventListener("DOMContentLoaded", toggleProductType);
+            </script>
+
+            <div class="pt-5 flex justify-end gap-3 border-t mt-4">
+                <button type="button" onclick="document.getElementById('productModal').classList.add('hidden')" class="px-5 py-2 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition border">Cancel</button>
+                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition shadow-md">Save Products / Add Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .animate-fade-in-up {
+        animation: fadeInUp 0.3s ease-out;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

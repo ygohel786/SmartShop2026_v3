@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}SmartShop Manager{% endblock %}</title>
-    
-    <!-- Tailwind CSS (નવી અને ક્લીન ડિઝાઇન માટે) -->
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- HTMX (ફાસ્ટ અને ડાયનેમિક પેજ માટે) -->
+    <!-- HTMX -->
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    
     <!-- Google Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -19,40 +17,49 @@
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen overflow-hidden relative">
 
-    <!-- ડાબી બાજુનું સુંદર સાઇડબાર (Sidebar) -->
-    <aside class="w-64 bg-indigo-900 text-white flex flex-col">
-        <div class="h-16 flex items-center justify-center border-b border-indigo-800">
+    <!-- Mobile Overlay (જ્યારે મોબાઈલમાં મેનુ ખુલે ત્યારે પાછળનો ભાગ કાળો કરવા) -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden transition-opacity"></div>
+
+    <!-- ડાબી બાજુનું સાઇડબાર (Responsive) -->
+    <aside id="sidebar" class="w-64 bg-indigo-900 text-white flex flex-col absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-300 ease-in-out z-30 shadow-2xl md:shadow-none h-full">
+        <div class="h-16 flex items-center justify-between md:justify-center px-4 border-b border-indigo-800">
             <h1 class="text-2xl font-bold tracking-wider">SmartShop</h1>
+            <!-- મોબાઈલ માટે ક્લોઝ બટન -->
+            <button onclick="toggleSidebar()" class="md:hidden text-indigo-200 hover:text-white">
+                <span class="material-icons">close</span>
+            </button>
         </div>
-        <nav class="flex-1 px-4 py-6 space-y-2">
-            <!-- Dashboard Link -->
+        
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             <a href="{% url 'home' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'home' %}bg-indigo-800{% endif %}">
                 <span class="material-icons">dashboard</span>
                 <span>Dashboard</span>
             </a>
-            
-            <!-- Inventory Link (જો તમે URL નું નામ inventory રાખ્યું હોય તો) -->
+
             <a href="{% url 'inventory' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'inventory' %}bg-indigo-800{% endif %}">
                 <span class="material-icons">inventory_2</span>
                 <span>Inventory</span>
             </a>
-            
-            <!-- Point of Sale (Billing) Link -->
+
             <a href="{% url 'sales' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'sales' %}bg-indigo-800{% endif %}">
                 <span class="material-icons">point_of_sale</span>
                 <span>Point of Sale</span>
             </a>
-            
-            <!-- Analysis Link -->
+
             <a href="{% url 'analysis' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'analysis' %}bg-indigo-800{% endif %}">
                 <span class="material-icons">analytics</span>
                 <span>Analysis</span>
             </a>
+            
+            <a href="{% url 'sales_history' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'sales_history' %}bg-indigo-800{% endif %}">
+                <!-- અહી receipt_long આઇકન વાપર્યો છે જે બિલ હિસ્ટ્રી માટે બેસ્ટ છે -->
+                <span class="material-icons">receipt_long</span>
+                <span>Sales History</span>
+            </a>
         </nav>
-        
-        <!-- Logout Link -->
+
         <div class="p-4 border-t border-indigo-800">
             <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-2 text-indigo-200 hover:text-white transition">
                 <span class="material-icons">logout</span>
@@ -61,40 +68,86 @@
         </div>
     </aside>
 
-    <!-- જમણી બાજુનો મુખ્ય ભાગ (Main Content) -->
-    <div class="flex-1 flex flex-col">
-        
-        <!-- ઉપરનું હેડર (Top Header) -->
-        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-8">
-            <h2 class="text-xl font-semibold text-gray-800">{% block header_title %}Welcome{% endblock %}</h2>
+    <!-- જમણી બાજુનો મુખ્ય ભાગ -->
+    <div class="flex-1 flex flex-col w-full h-full overflow-hidden">
+
+        <!-- ઉપરનું હેડર -->
+        <header class="h-16 bg-white shadow-sm flex items-center justify-between px-4 md:px-8 z-10">
             <div class="flex items-center gap-4">
-                <span class="material-icons text-gray-500">notifications</span>
-                <div class="h-8 w-8 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold">
-                    Y
+                <!-- હેમ્બર્ગર બટન (માત્ર મોબાઈલમાં દેખાશે) -->
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-600 hover:text-indigo-600 focus:outline-none">
+                    <span class="material-icons text-3xl">menu</span>
+                </button>
+                <h2 class="text-xl font-semibold text-gray-800 truncate max-w-[200px] md:max-w-none">{% block header_title %}Welcome{% endblock %}</h2>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <span class="material-icons text-gray-500 cursor-pointer hover:text-indigo-600 transition">notifications</span>
+                
+                <!-- ડાયનેમિક યુઝર પ્રોફાઈલ અને ડ્રોપડાઉન મેનુ -->
+                <div class="relative">
+                    <div id="profileButton" onclick="toggleDropdown(event)" class="h-9 w-9 bg-indigo-100 text-indigo-800 rounded-full flex items-center justify-center font-bold shadow-sm border border-indigo-200 cursor-pointer hover:bg-indigo-200 transition" title="{{ request.user.username }}">
+                        {{ request.user.username|make_list|first|upper }}
+                    </div>
+                    
+                    <!-- Dropdown Menu (ડિફોલ્ટ Hidden રહેશે) -->
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden transform origin-top-right transition-all">
+                        <a href="{% url 'profile' %}" class="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
+                            <span class="material-icons text-sm align-middle mr-2">person</span> My Profile
+                        </a>
+                        <a href="{% url 'logout' %}" class="block px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 border-t border-gray-50 transition">
+                            <span class="material-icons text-sm align-middle mr-2">logout</span> Logout
+                        </a>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- પેજનો અંદરનો ડેટા (Dynamic Content) -->
-        <main class="flex-1 p-8 overflow-y-auto">
-            
-            <!-- મેસેજ બતાવવા માટે -->
+        <!-- પેજનો અંદરનો ડેટા -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto w-full">
             {% if messages %}
-                <div class="mb-4">
+                <div class="mb-6">
                     {% for msg in messages %}
-                        <div class="p-4 rounded-lg {% if msg.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                        <div class="p-4 rounded-lg shadow-sm border {% if msg.tags == 'error' %}bg-red-50 border-red-200 text-red-700{% else %}bg-green-50 border-green-200 text-green-700{% endif %} flex items-center gap-3 mb-2">
+                            <span class="material-icons">{% if msg.tags == 'error' %}error_outline{% else %}check_circle_outline{% endif %}</span>
                             {{ msg }}
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
 
-            <!-- દરેક પેજનો કોડ અહીં આવશે -->
             {% block content %}
             {% endblock %}
-            
         </main>
     </div>
 
+    <!-- JavaScript -->
+    <script>
+        // સાઇડબાર માટે
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+
+        // પ્રોફાઈલ ડ્રોપડાઉન ખોલવા/બંધ કરવા માટે
+        function toggleDropdown(event) {
+            event.stopPropagation(); // ક્લિકને ફેલાવા ના દેવા માટે
+            const dropdown = document.getElementById('profileDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // જો યુઝર ડ્રોપડાઉનની બહાર ક્યાંય પણ ક્લિક કરે તો ડ્રોપડાઉન બંધ થઈ જાય
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('profileDropdown');
+            const profileButton = document.getElementById('profileButton');
+            
+            if (!dropdown.classList.contains('hidden') && !profileButton.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,65 +1,182 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="p-8">
-    <h2 class="text-2xl font-bold text-gray-800 mb-8">AI Sales Prediction & Analysis</h2>
-
-    <!-- Data Loading Spinner -->
-    <div id="loading" class="text-indigo-600 font-bold mb-4 flex items-center gap-2">
-        <span class="material-icons animate-spin">sync</span>
-        🤖 AI is analyzing your sales data... Please wait...
+<div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-fade-in-up">
+    
+    <!-- Header -->
+    <div>
+        <h2 class="text-3xl font-black text-gray-800 tracking-tight">Analytics & Buying Suggestions</h2>
+        <p class="text-gray-500 mt-1">Smart Demand Forecasting System based on Machine Learning & Trends</p>
     </div>
 
-    <!-- Suggestions Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hidden" id="suggestions-container">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="bg-gray-50 text-gray-600 border-b border-gray-200 text-sm uppercase tracking-wider">
-                    <th class="p-4 font-semibold">Product Name</th>
-                    <th class="p-4 font-semibold">Category</th>
-                    <th class="p-4 font-semibold">Next Month Prediction (Qty)</th>
-                    <th class="p-4 font-semibold">Avg Selling Price</th>
-                </tr>
-            </thead>
-            <tbody class="text-gray-700" id="suggestions-body">
-                <!-- JavaScript થી ડેટા અહીં ઓટોમેટિક આવશે -->
-            </tbody>
-        </table>
+    <!-- 1. નફો અને આવક Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500 flex items-center gap-4 hover:shadow-md transition">
+            <div class="p-4 bg-blue-50 text-blue-600 rounded-xl"><span class="material-icons text-3xl">account_balance_wallet</span></div>
+            <div>
+                <p class="text-sm font-bold text-gray-500 uppercase">Total Revenue</p>
+                <h3 class="text-2xl font-black text-gray-800">₹{{ total_revenue|floatformat:2 }}</h3>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 flex items-center gap-4 hover:shadow-md transition">
+            <div class="p-4 bg-green-50 text-green-600 rounded-xl"><span class="material-icons text-3xl">trending_up</span></div>
+            <div>
+                <p class="text-sm font-bold text-gray-500 uppercase">Total Net Profit</p>
+                <h3 class="text-2xl font-black text-green-600">₹{{ total_profit|floatformat:2 }}</h3>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500 flex items-center gap-4 hover:shadow-md transition">
+            <div class="p-4 bg-purple-50 text-purple-600 rounded-xl"><span class="material-icons text-3xl">receipt_long</span></div>
+            <div>
+                <p class="text-sm font-bold text-gray-500 uppercase">Total Bills</p>
+                <h3 class="text-2xl font-black text-gray-800">{{ total_invoices }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. MASTER REPORT (Top 25) -->
+    <div class="bg-gradient-to-br from-indigo-900 to-indigo-700 rounded-2xl shadow-lg p-1">
+        <div class="bg-white rounded-xl p-6">
+            <div class="flex items-center gap-3 mb-6 border-b pb-4">
+                <span class="material-icons text-3xl text-indigo-600">psychology</span>
+                <div>
+                    <h3 class="text-xl font-black text-gray-800">Master Buying Suggestion (Top 25)</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase">AI Analyzed based on Seasonality, Current Trend & History</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for item in master_report %}
+                <div class="flex items-center justify-between p-3 bg-indigo-50 border border-indigo-100 rounded-lg hover:shadow-md transition">
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="w-8 h-8 shrink-0 rounded-full bg-indigo-600 text-white flex justify-center items-center font-bold text-xs">
+                            #{{ forloop.counter }}
+                        </div>
+                        <div class="truncate">
+                            <h4 class="font-bold text-indigo-900 text-sm truncate" title="{{ item.name }}">{{ item.name }}</h4>
+                            <p class="text-xs text-indigo-600 truncate">{{ item.company }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="bg-white px-2 py-1 rounded text-xs font-black text-indigo-800 shadow-sm border border-indigo-100" title="Algorithm Score">Score: {{ item.score|floatformat:1 }}</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-3 text-center text-gray-500 py-4 font-medium">માસ્ટર રિપોર્ટ જનરેટ કરવા માટે પૂરતો ડેટા નથી. પેલા થોડા બિલ બનાવો.</div>
+                {% endfor %}
+            </div>
+            
+            <p class="text-xs text-gray-500 mt-5 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <b>💡 Master Algorithm Logic:</b> આ લિસ્ટ પાછલા 30 દિવસના ટ્રેન્ડ, ગયા વર્ષના આખા ડેટા અને ખાસ કરીને <b>આવતા મહિનાના ({{ upcoming_month_name }})</b> ગયા વર્ષના ડેટાને ભેગો કરીને બનાવવામાં આવ્યું છે. નવો માલ ખરીદતી વખતે આ ટોપ 25 પ્રોડક્ટ્સનો સ્ટોક પૂરતો રાખવો.
+            </p>
+        </div>
+    </div>
+
+    <!-- 3. INDIVIDUAL 5 REPORTS (Top 20 each) -->
+    <h3 class="text-xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">Individual Reports Breakdown (Top 20 Data)</h3>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        
+        <!-- Report 1 -->
+        <div class="bg-white rounded-xl shadow-sm border border-orange-200 p-5">
+            <h4 class="font-bold text-orange-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
+                <span class="material-icons text-sm">event_repeat</span> Upcoming Season ({{ upcoming_month_name }})
+            </h4>
+            <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                {% for item in top_upcoming_last_year %}
+                <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                    <span class="font-medium text-gray-700 truncate pr-2" title="{{ item.product__name }}">{{ forloop.counter }}. {{ item.product__name }}</span>
+                    <span class="font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-xs">No Data Available</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Report 2 -->
+        <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-5">
+            <h4 class="font-bold text-blue-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
+                <span class="material-icons text-sm">trending_up</span> Last 30 Days Trend
+            </h4>
+            <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                {% for item in top_last_month %}
+                <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                    <span class="font-medium text-gray-700 truncate pr-2" title="{{ item.product__name }}">{{ forloop.counter }}. {{ item.product__name }}</span>
+                    <span class="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-xs">No Data Available</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Report 3 -->
+        <div class="bg-white rounded-xl shadow-sm border border-cyan-200 p-5">
+            <h4 class="font-bold text-cyan-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
+                <span class="material-icons text-sm">pie_chart</span> Last Quarter (90 Days)
+            </h4>
+            <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                {% for item in top_last_quarter %}
+                <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                    <span class="font-medium text-gray-700 truncate pr-2" title="{{ item.product__name }}">{{ forloop.counter }}. {{ item.product__name }}</span>
+                    <span class="font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-xs">No Data Available</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Report 4 -->
+        <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5">
+            <h4 class="font-bold text-emerald-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
+                <span class="material-icons text-sm">calendar_today</span> Current Year
+            </h4>
+            <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                {% for item in top_current_year %}
+                <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                    <span class="font-medium text-gray-700 truncate pr-2" title="{{ item.product__name }}">{{ forloop.counter }}. {{ item.product__name }}</span>
+                    <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-xs">No Data Available</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Report 5 -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-300 p-5">
+            <h4 class="font-bold text-gray-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
+                <span class="material-icons text-sm">history</span> Last Year Complete
+            </h4>
+            <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
+                {% for item in top_last_year %}
+                <li class="flex justify-between items-center text-sm border-b border-gray-50 pb-2">
+                    <span class="font-medium text-gray-600 truncate pr-2" title="{{ item.product__name }}">{{ forloop.counter }}. {{ item.product__name }}</span>
+                    <span class="font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
+                </li>
+                {% empty %}
+                <li class="text-gray-400 text-xs">No Data Available</li>
+                {% endfor %}
+            </ul>
+        </div>
+
     </div>
 </div>
 
-<script>
-    // પેજ લોડ થાય એટલે તરત જ બેકએન્ડમાંથી AI નો ડેટા મંગાવશે
-    document.addEventListener("DOMContentLoaded", function() {
-        fetch("{% url 'overall' %}")
-        .then(response => response.json())
-        .then(data => {
-            // લોડિંગ મેસેજ બંધ કરો
-            document.getElementById("loading").style.display = "none";
-
-            // જો એરર આવે (દા.ત. બિલ ના હોય તો)
-            if (data.error) {
-                document.getElementById("suggestions-container").classList.remove("hidden");
-                document.getElementById("suggestions-body").innerHTML = `<tr><td colspan="4" class="p-4 text-red-500 font-bold">${data.error}</td></tr>`;
-                return;
-            }
-
-            // જો ડેટા આવી જાય તો તેને ટેબલમાં ગોઠવો
-            let tbody = document.getElementById("suggestions-body");
-            data.buying_suggestions.forEach(item => {
-                let row = `<tr class="border-b border-gray-50 hover:bg-gray-50 transition">
-                    <td class="p-4 font-medium">${item.ProductName}</td>
-                    <td class="p-4">${item.CategoryName}</td>
-                    <td class="p-4 font-bold text-indigo-600">📦 ${item.Predicted_Next_Month_Sales} Units</td>
-                    <td class="p-4 text-green-600">₹${item.SellingPrice}</td>
-                </tr>`;
-                tbody.innerHTML += row;
-            });
-            // ટેબલને સ્ક્રીન પર બતાવો
-            document.getElementById("suggestions-container").classList.remove("hidden");
-        })
-        .catch(error => {
-            document.getElementById("loading").innerHTML = "<span class='text-red-500'>Error loading predictions.</span>";
-        });
-    });
-</script>
+<style>
+    /* Custom Scrollbar for small lists */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+    
+    .animate-fade-in-up {
+        animation: fadeInUp 0.4s ease-out;
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
 {% endblock %}

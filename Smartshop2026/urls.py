@@ -3,8 +3,11 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # આપણી ત્રણેય એપ્સના URLs અહી જોડી દીધા છે:
+    
+    # Account અને Inventory ના પાથ ડાયરેક્ટ ચાલશે
     path('', include('Account.urls')),
     path('', include('Inventory.urls')),
-    path('', include('Analysis.urls')),
+    
+    # Analysis ને 'analysis/' પાથ આપ્યો છે, જેથી કન્ફ્યુઝન ના થાય
+    path('analysis/', include('Analysis.urls')),
 ]
