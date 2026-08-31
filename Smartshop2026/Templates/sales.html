@@ -33,22 +33,35 @@
         <div class="bg-indigo-50 rounded-xl shadow-sm p-6 border border-indigo-100">
             <h3 class="text-lg font-bold text-indigo-900 mb-4">Add Item to Cart</h3>
             <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-indigo-800 mb-1">Select Product</label>
-                    <select id="product_id" name="product_id" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                        <option value="">-- Search & Select --</option>
-                        {% for product in products %}
-                            {% if product.current_stock > 0 %}
-                                <option value="{{ product.id }}">{{product.serial_number}} - {{ product.name }} - ₹{{ product.selling_price }}</option>
-                            {% endif %} 
-                        {% endfor %}
-                    </select>
+                
+                <!-- સ્કેનર બટન અને ડ્રોપડાઉન એકસાથે -->
+                <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                        <label class="block text-sm font-medium text-indigo-800 mb-1">Select Product / Scan</label>
+                        <select id="product_id" name="product_id" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
+                            <option value="">-- Search & Select --</option>
+                            {% for product in products %}
+                                {% if product.current_stock > 0 %}
+                                    <option value="{{ product.id }}">{{product.serial_number}} - {{ product.name }} - ₹{{ product.selling_price }}</option>
+                                {% endif %} 
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- નવું સ્કેન બટન -->
+                    <button type="button" onclick="openScanner()" title="Scan Barcode/IMEI" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center justify-center shadow-md transition h-[42px]">
+                        <span class="material-icons">qr_code_scanner</span>
+                    </button>
                 </div>
+                
                 <div>
                     <label class="block text-sm font-medium text-indigo-800 mb-1">Quantity</label>
                     <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
                 </div>
+                
+                <!-- બટનમાં id="addBtn" ઉમેર્યું છે જેથી સ્કેનર જાતે ક્લિક કરી શકે -->
                 <button type="button" 
+                        id="addBtn"
                         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-md flex items-center justify-center gap-2"
                         hx-post="{% url 'hx_add_bill_item' %}" 
                         hx-target="#itemTableBody" 
@@ -102,16 +115,70 @@
                 </div>
             </div>
             
-            <button type="submit" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2 text-lg">
-                <span class="material-icons">receipt</span>
-                Generate Invoice
+            <!-- ========================================== -->
+            <!-- 💳 PAYMENT MODE SELECTION -->
+            <!-- ========================================== -->
+            <div class="mt-4 mb-2">
+                <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">પેમેન્ટ કેવી રીતે આવ્યું? <span class="text-red-500">*</span></label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_mode" value="CASH" autocomplete="off" class="peer hidden" onchange="enableInvoiceBtn()">
+                        <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 hover:bg-gray-50 transition font-bold text-sm">
+                            💵 Cash
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_mode" value="UPI" class="peer hidden" onchange="enableInvoiceBtn()">
+                        <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 hover:bg-gray-50 transition font-bold text-sm">
+                            📱 UPI
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_mode" value="CARD" class="peer hidden" onchange="enableInvoiceBtn()">
+                        <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 transition font-bold text-sm">
+                            💳 Card
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="payment_mode" value="UNPAID" class="peer hidden" onchange="enableInvoiceBtn()">
+                        <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 hover:bg-gray-50 transition font-bold text-sm">
+                            📝 ઉધાર (બાકી)
+                        </div>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" id="generateInvoiceBtn" disabled class="w-full mt-6 bg-gray-300 text-gray-500 cursor-not-allowed font-bold py-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-lg">
+                <span class="material-icons">receipt_long</span>
+                પેમેન્ટ સિલેક્ટ કરો...
             </button>
         </div>
     </div>
 </form>
 
-<!-- JS for Live Total Calculation -->
+<!-- Scanner Modal (જ્યારે સ્કેન પર ક્લિક થશે ત્યારે આ ખુલશે) -->
+<div id="scannerModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
+        <div class="bg-indigo-900 px-4 py-3 flex justify-between items-center text-white">
+            <h3 class="font-bold flex items-center gap-2"><span class="material-icons">qr_code_scanner</span> Scan Barcode / IMEI</h3>
+            <button type="button" onclick="closeScanner()" class="text-red-400 hover:text-red-300 font-bold text-2xl">&times;</button>
+        </div>
+        <div class="p-4">
+            <div id="reader" class="w-full overflow-hidden rounded-lg"></div>
+            <p class="text-center text-xs text-gray-500 mt-4">તમારા કેમેરા સામે પ્રોડક્ટનો બારકોડ કે IMEI ધરો. સ્કેન થતા જ તે સીધું બિલમાં એડ થઈ જશે.</p>
+        </div>
+    </div>
+</div>
+
+<!-- લાઈબ્રેરી -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+<!-- JS for Live Total Calculation & Scanner -->
+<!-- JS for Live Total Calculation & Scanner -->
 <script>
+    // ------------------------------------------------
+    // Total Calculation Logic
+    // ------------------------------------------------
     function calculateTotal() {
         const rows = document.querySelectorAll('#itemTableBody tr');
         let subtotalSum = 0;
@@ -129,10 +196,110 @@
         const grandTotal = subtotalSum + sgstAmount + cgstAmount;
 
         document.getElementById('grand_total').value = grandTotal.toFixed(2);
+        
+        // જો પ્રોડક્ટ એડ થઈ ગઈ હોય, તો ડ્રોપડાઉન ખાલી કરી દો (બીજી પ્રોડક્ટ માટે તૈયાર)
+        document.getElementById('product_id').value = "";
+        document.getElementById('quantity').value = "1";
     }
 
     document.body.addEventListener('htmx:afterSwap', calculateTotal);
     document.getElementById('sgst').addEventListener('input', calculateTotal);
     document.getElementById('cgst').addEventListener('input', calculateTotal);
+
+    // ------------------------------------------------
+    // Barcode Scanner Logic
+    // ------------------------------------------------
+    let html5QrcodeScanner;
+
+    function openScanner() {
+        document.getElementById('scannerModal').classList.remove('hidden');
+        
+        // કેમેરા સેટઅપ
+        html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", 
+            { fps: 10, qrbox: {width: 250, height: 250} }, 
+            /* verbose= */ false
+        );
+        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+    }
+
+    function closeScanner() {
+        document.getElementById('scannerModal').classList.add('hidden');
+        if (html5QrcodeScanner) {
+            html5QrcodeScanner.clear(); // કેમેરા બંધ કરવા
+        }
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+        // ૧. સ્કેન સફળ થાય એટલે કેમેરા બંધ કરો
+        closeScanner();
+        
+        // ૨. ડ્રોપડાઉનમાંથી પ્રોડક્ટ શોધો
+        const select = document.getElementById('product_id');
+        let found = false;
+        
+        for (let i = 0; i < select.options.length; i++) {
+            // જો ડ્રોપડાઉન ના લખાણમાં બારકોડ/IMEI મેચ થાય
+            if (select.options[i].text.toLowerCase().includes(decodedText.toLowerCase())) {
+                select.selectedIndex = i;
+                found = true;
+                break;
+            }
+        }
+        
+        // ૪. જો પ્રોડક્ટ મળી જાય તો ઓટોમેટિક બિલમાં એડ કરો
+        if(found) {
+            const qtyInput = document.getElementById('quantity');
+            qtyInput.value = "1"; // ડિફોલ્ટ 1 રાખો
+            qtyInput.focus(); // કર્સર સીધું ક્વોન્ટિટી બોક્સમાં લઈ જાવ
+            qtyInput.select(); // પહેલેથી લખેલો 1 સિલેક્ટ થઈ જશે, જેથી યુઝર સીધો નવો આંકડો જ ટાઈપ કરી શકે
+        } else {
+            alert("❌ પ્રોડક્ટ મળતી નથી! (આ બારકોડ: " + decodedText + " ઇન્વેન્ટરીમાં નથી અથવા તેનો સ્ટોક ૦ છે.)");
+        }
+    }
+
+    function onScanFailure(error) {
+        // બેકગ્રાઉન્ડમાં ચાલશે, કશું કરવાની જરૂર નથી
+    }
+
+    // ------------------------------------------------
+    // 💳 Payment Logic (Enable Button) - 100% Fixed
+    // ------------------------------------------------
+    document.addEventListener("DOMContentLoaded", function() {
+        
+        // ૧. પેજ લોડ થાય ત્યારે બધા પેમેન્ટ બટન ખાલી (Uncheck) કરો
+        const paymentRadios = document.querySelectorAll('input[name="payment_mode"]');
+        paymentRadios.forEach(radio => {
+            radio.checked = false;
+        });
+
+        // ૨. મુખ્ય બટનને શરૂઆતમાં બંધ (Disabled) કરી દો
+        const generateBtn = document.getElementById('generateInvoiceBtn');
+        if(generateBtn) {
+            generateBtn.disabled = true;
+            generateBtn.className = "w-full mt-6 bg-gray-300 text-gray-500 cursor-not-allowed font-bold py-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-lg";
+            generateBtn.innerHTML = '<span class="material-icons">receipt_long</span> પેમેન્ટ સિલેક્ટ કરો...';
+        }
+
+        // ૩. જ્યારે યુઝર કોઈ પણ પેમેન્ટ મોડ સિલેક્ટ કરે, ત્યારે બટન એક્ટિવ કરો
+        paymentRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if(this.checked && generateBtn) {
+                    // બટન ચાલુ કરો
+                    generateBtn.disabled = false;
+                    
+                    // જૂના ગ્રે કલર કાઢી નાખો
+                    generateBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+                    
+                    // નવા લીલા કલર અને સ્ટાઈલ એડ કરો
+                    generateBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white', 'shadow-lg');
+                    
+                    // બટનનું લખાણ બદલો
+                    generateBtn.innerHTML = '<span class="material-icons">receipt</span> Generate Invoice';
+                }
+            });
+        });
+    });
+
 </script>
 {% endblock %}

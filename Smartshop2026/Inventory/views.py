@@ -3,9 +3,19 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
-from .models import Product, Invoice, InvoiceItem, StockMovement, Category
+from .models import Product, Invoice, InvoiceItem, StockMovement, Category, CustomerProfile, LedgerTransaction
 from django.db.models import Q, Sum, F, DecimalField
 from django.utils import timezone
+import json
+from datetime import timedelta
+from django.db.models.functions import TruncDate
+import os
+from google.cloud import vision
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+# તમારો GCP કી પાથ અહી સેટ કરો
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/credentials.json"
 
 @login_required
 def home(request):
@@ -13,23 +23,48 @@ def home(request):
     today = timezone.now().date()
 
     # ૧. આજનું વેચાણ અને આજના બિલ
-    todays_invoices = Invoice.objects.filter(shop=user, date__date=today)
+    todays_invoices = Invoice.objects.filter(shop=user, date=today)
     todays_bills_count = todays_invoices.count()
 
-    # આજના વેચાણની કુલ રકમ (Total Revenue for Today)
-    todays_sales = InvoiceItem.objects.filter(invoice__shop=user, invoice__date__date=today).aggregate(
+    todays_sales = InvoiceItem.objects.filter(invoice__shop=user, invoice__date=today).aggregate(
         total=Sum(F('quantity') * F('selling_price'), output_field=DecimalField())
     )
     todays_revenue = todays_sales['total'] or 0
 
     # ૨. કુલ પ્રોડક્ટ્સ
-    total_products = Product.objects.filter(shop=user).count()
+    all_products = Product.objects.filter(shop=user)
+    total_products = all_products.count()
 
-    # ૩. Low Stock Alerts (જેનો સ્ટોક 5 કે તેનાથી ઓછો છે)
-    low_stock_products = Product.objects.filter(shop=user, current_stock__lte=5).order_by('current_stock')[:10]
+    # ૩. Low Stock Alerts (Python logic થી સોલ્વ કરેલું)
+    low_stock_list = [p for p in all_products if p.current_stock <= 5]
+    low_stock_products = sorted(low_stock_list, key=lambda x: x.current_stock)[:10]
 
-    # ૪. Recent Sales (છેલ્લા 5 બિલ)
+    # ૪. Recent Sales
     recent_sales = Invoice.objects.filter(shop=user).order_by('-date')[:5]
+
+    # ૫. 📊 Chart.js માટે છેલ્લા 7 દિવસનો ડેટા
+    last_7_days = today - timedelta(days=6)
+    
+    sales_data = InvoiceItem.objects.filter(
+        invoice__shop=user, 
+        invoice__date__gte=last_7_days
+    ).values('invoice__date').annotate(
+        daily_total=Sum(F('quantity') * F('selling_price'), output_field=DecimalField())
+    ).order_by('invoice__date')
+
+    chart_dates = []
+    chart_revenues = []
+    
+    for i in range(7):
+        current_d = last_7_days + timedelta(days=i)
+        chart_dates.append(current_d.strftime('%d %b')) 
+        
+        daily_val = 0
+        for data in sales_data:
+            if data['invoice__date'] == current_d:
+                daily_val = float(data['daily_total'])
+                break
+        chart_revenues.append(daily_val)
 
     context = {
         'todays_revenue': todays_revenue,
@@ -37,6 +72,8 @@ def home(request):
         'total_products': total_products,
         'low_stock_products': low_stock_products,
         'recent_sales': recent_sales,
+        'chart_dates': json.dumps(chart_dates),
+        'chart_revenues': json.dumps(chart_revenues),
     }
     
     return render(request, 'home.html', context)
@@ -162,6 +199,59 @@ def add_product(request):
     return redirect('inventory')
 
 @login_required
+def print_barcodes(request, product_id):
+    product = get_object_or_404(Product, id=product_id, shop=request.user)
+    
+    # URL માંથી qty લેશે (ડિફોલ્ટ જેટલો કરંટ સ્ટોક છે તેટલા પ્રિન્ટ કરશે)
+    qty = int(request.GET.get('qty', product.current_stock))
+    
+    # ઓછામાં ઓછું 1 સ્ટીકર તો પ્રિન્ટ થવું જ જોઈએ (ભલે સ્ટોક 0 હોય)
+    if qty < 1:
+        qty = 1
+        
+    context = {
+        'product': product,
+        # પાયથોનનું range ફંક્શન ફ્રન્ટએન્ડમાં એટલી વાર લૂપ ફેરવશે
+        'stickers': range(qty)
+    }
+    return render(request, 'print_barcodes.html', context)
+
+
+@csrf_exempt
+@login_required
+def smart_invoice_scan(request):
+    if request.method == 'POST' and request.FILES.get('invoice_image'):
+        image_file = request.FILES['invoice_image']
+        content = image_file.read()
+
+        # Google Vision Client શરૂ કરો
+        client = vision.ImageAnnotatorClient()
+        image = vision.Image(content=content)
+
+        # ઈમેજમાંથી ટેક્સ્ટ (OCR) મેળવો
+        response = client.text_detection(image=image)
+        texts = response.text_annotations
+
+        if response.error.message:
+            return JsonResponse({'error': response.error.message}, status=400)
+
+        # પહેલું રીઝલ્ટ આખા પેજનું ટેક્સ્ટ હોય છે
+        raw_text = texts[0].description if texts else ""
+
+        # અહી આપણે કાચા ટેક્સ્ટને પ્રોસેસ કરીને JSON બનાવી શકીએ
+        # દા.ત. લાઈન-બાય-લાઈન ચેક કરીને નામ, Quantity અને ભાવ અલગ કરવા
+        extracted_lines = raw_text.split('\n')
+        
+        # આ કાચો ડેટા ફ્રન્ટએન્ડ પર મોકલો જ્યાં JavaScript તેને ફોર્મમાં ભરી દેશે
+        return JsonResponse({
+            'success': True,
+            'raw_text': raw_text,
+            'lines': extracted_lines
+        })
+        
+    return JsonResponse({'error': 'No image uploaded'}, status=400)
+
+@login_required
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id, shop=request.user)
     if request.method == 'POST':
@@ -228,10 +318,11 @@ def generate_bill(request):
                 sgst = float(request.POST.get('sgst') or 0)
                 cgst = float(request.POST.get('cgst') or 0)
                 grand_total = float(request.POST.get('grand_total') or 0)
+                payment_mode = request.POST.get('payment_mode', 'CASH')
 
                 invoice = Invoice.objects.create(
                     shop=request.user, customer_name=customer_name, contact_number=contact_number,
-                    gst_number=gst_number, sgst_percentage=sgst, cgst_percentage=cgst, grand_total=grand_total
+                    gst_number=gst_number, sgst_percentage=sgst, cgst_percentage=cgst, grand_total=grand_total, payment_mode=payment_mode
                 )
 
                 billed_items = request.POST.getlist('billed_items')
@@ -241,6 +332,33 @@ def generate_bill(request):
                     InvoiceItem.objects.create(
                         invoice=invoice, product=product, quantity=int(quantity), selling_price=product.selling_price
                     )
+                
+                # ==========================================
+                # 🪄 SMART KHATA BOOK INTEGRATION
+                # ==========================================
+                if payment_mode == 'UNPAID':
+                    # ૧. પહેલા ડેટાબેઝમાં ચેક કરો કે આ મોબાઈલ નંબરવાળો ગ્રાહક પહેલેથી છે કે નહિ?
+                    customer_profile = CustomerProfile.objects.filter(shop=request.user, phone=contact_number).first()
+                    
+                    if customer_profile:
+                        # ગ્રાહક પહેલેથી છે, કશું નવું બનાવવાનું નથી
+                        pass 
+                    else:
+                        # નવો ગ્રાહક હોય, તો નામ અને નંબરથી તેનું નવું ખાતું બનાવી દો
+                        customer_profile = CustomerProfile.objects.create(
+                            shop=request.user,
+                            name=customer_name,
+                            phone=contact_number
+                        )
+                    
+                    # ૨. ગ્રાહક નવો હોય કે જૂનો, તેના ખાતામાં સીધી ઉધાર (બાકી) ની એન્ટ્રી પાડી દો
+                    LedgerTransaction.objects.create(
+                        customer=customer_profile,
+                        transaction_type='GIVEN',
+                        amount=invoice.grand_total,
+                        description=f"Invoice #{invoice.id} (બિલ બાકી)"
+                    )
+                # ==========================================
             
             messages.success(request, "Bill Generated Successfully!")
             # બિલ સેવ થતા જ સીધું પ્રિન્ટ પેજ પર જશે!
@@ -250,6 +368,7 @@ def generate_bill(request):
             messages.error(request, f"Error generating bill: {str(e)}")
             return redirect('sales')
     return redirect('sales')
+
 
 # ==========================================
 # નવા ફંક્શન: Sales History અને Print Bill
@@ -282,3 +401,58 @@ def sales_history(request):
 def print_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id, shop=request.user)
     return render(request, 'print_invoice.html', {'invoice': invoice})
+
+@login_required
+def khata_dashboard(request):
+    customers = CustomerProfile.objects.filter(shop=request.user).order_by('-created_at')
+    
+    # માર્કેટમાં કુલ કેટલા રૂપિયા લેવાના બાકી છે તેનું ટોટલ (ફક્ત પોઝિટિવ બેલેન્સ)
+    total_market_outstanding = sum(c.total_balance for c in customers if c.total_balance > 0)
+    
+    context = {
+        'customers': customers,
+        'total_market_outstanding': total_market_outstanding
+    }
+    return render(request, 'khata.html', context)
+
+@login_required
+def add_khata_customer(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address', '')
+        
+        CustomerProfile.objects.create(shop=request.user, name=name, phone=phone, address=address)
+        messages.success(request, f"✅ ખાતાવહીમાં નવા ગ્રાહક '{name}' નું ખાતું ખૂલી ગયું છે!")
+        
+    return redirect('khata_dashboard')
+
+@login_required
+def khata_detail(request, customer_id):
+    customer = get_object_or_404(CustomerProfile, id=customer_id, shop=request.user)
+    transactions = customer.transactions.all().order_by('-date')
+    
+    context = {
+        'customer': customer,
+        'transactions': transactions
+    }
+    return render(request, 'khata_detail.html', context)
+
+@login_required
+def add_khata_transaction(request, customer_id):
+    customer = get_object_or_404(CustomerProfile, id=customer_id, shop=request.user)
+    if request.method == 'POST':
+        transaction_type = request.POST.get('transaction_type')
+        amount = request.POST.get('amount')
+        description = request.POST.get('description')
+        
+        LedgerTransaction.objects.create(
+            customer=customer,
+            transaction_type=transaction_type,
+            amount=amount,
+            description=description
+        )
+        msg = "ઉધાર આપ્યા (બાકી)" if transaction_type == 'GIVEN' else "જમા લીધા (પેમેન્ટ)"
+        messages.success(request, f"✅ ₹{amount} - {msg} સફળતાપૂર્વક નોંધાઈ ગયા!")
+        
+    return redirect('khata_detail', customer_id=customer.id)

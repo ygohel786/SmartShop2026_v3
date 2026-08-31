@@ -63,6 +63,19 @@
         </div>
     </div>
 
+    <!-- 📊 Sales Trend Chart (નવો ઉમેરેલો ભાગ) -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                <span class="material-icons text-indigo-600">insights</span> Last 7 Days Revenue Trend
+            </h3>
+        </div>
+        <!-- અહી ગ્રાફ દેખાશે -->
+        <div class="h-64 w-full">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </div>
+
     <!-- Main Grid: Alerts & History -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
         
@@ -142,6 +155,70 @@
 
     </div>
 </div>
+
+<!-- Chart.js લાઈબ્રેરી -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- જાવાસ્ક્રિપ્ટ ગ્રાફ દોરવા માટે -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // બેકએન્ડમાંથી આવેલો ડેટા (જો ડેટા ન હોય તો ખાલી એરે આપશે)
+        const dates = {{ chart_dates|safe|default:"[]" }};
+        const revenues = {{ chart_revenues|safe|default:"[]" }};
+        
+        if(dates.length > 0 && revenues.length > 0) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line', 
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Daily Revenue (₹)',
+                        data: revenues,
+                        borderColor: '#4f46e5', // Indigo color
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#4f46e5',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.4 // વળાંક (curve) આપવા માટે
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            padding: 10,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '₹ ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f3f4f6', drawBorder: false },
+                            ticks: { font: { family: 'Inter' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { family: 'Inter' } }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
 
 <style>
     .animate-fade-in-up {

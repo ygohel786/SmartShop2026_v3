@@ -1,115 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice #INV-{{ invoice.id|stringformat:"04d" }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* પ્રિન્ટ કાઢતી વખતે બટનો છુપાવવા માટે */
-        @media print {
-            .no-print { display: none !important; }
-            body { padding: 0 !important; background-color: white !important; }
-            .print-box { box-shadow: none !important; border: none !important; }
-        }
-    </style>
-</head>
-<body class="bg-gray-100 p-8 font-sans">
+{% extends 'base.html' %}
+<!-- અહીં દુકાનદારનું નામ ડાયનેમિક આવશે -->
+{% block title %}Invoice #{{ invoice.id }} - {{ invoice.shop.shop_name }}{% endblock %}
 
-    <!-- Print Controls -->
-    <div class="max-w-3xl mx-auto mb-4 flex justify-between items-center no-print">
-        <a href="{% url 'sales_history' %}" class="text-blue-600 font-bold hover:underline">&larr; Back to History</a>
-        <button onclick="window.print()" class="bg-indigo-600 text-white px-6 py-2 rounded shadow hover:bg-indigo-700 font-bold">
-            🖨️ Print Invoice
+{% block content %}
+<style>
+    /* ========================================== */
+    /* 🖨️ PRINT STYLES (માત્ર પ્રિન્ટ કરતી વખતે જ લાગુ પડશે) */
+    /* ========================================== */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        #printableArea, #printableArea * {
+            visibility: visible;
+        }
+        #printableArea {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+            box-shadow: none !important;
+            border: none !important;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="max-w-4xl mx-auto mt-4 mb-10 animate-fade-in-up">
+    
+    <!-- 🖲️ Action Buttons (પ્રિન્ટમાં નહિ દેખાય) -->
+    <div class="flex justify-end gap-4 mb-6 no-print">
+        <a href="{% url 'sales' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-lg font-bold flex items-center gap-2 transition">
+            <span class="material-icons text-sm">arrow_back</span> નવું બિલ બનાવો
+        </a>
+        <button onclick="shareWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2 shadow-md transition">
+            <span class="material-icons text-sm">whatsapp</span> WhatsApp પર મોકલો
+        </button>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2 shadow-md transition">
+            <span class="material-icons text-sm">print</span> Print Invoice
         </button>
     </div>
 
-    <!-- Invoice Paper -->
-    <div class="max-w-3xl mx-auto bg-white p-10 rounded-lg shadow-lg print-box border border-gray-200">
+    <!-- 📄 PRINTABLE AREA (મુખ્ય બિલ) -->
+    <div id="printableArea" class="bg-white p-8 md:p-12 rounded-xl shadow-lg border border-gray-200">
         
-        <!-- Header -->
-        <div class="flex justify-between items-start border-b pb-6 mb-6">
+        <!-- Header Section -->
+        <div class="flex justify-between items-start border-b-2 border-gray-800 pb-6 mb-6">
             <div>
-                <h1 class="text-4xl font-black text-indigo-700 tracking-tight">{{ request.user.shop_name|upper }}</h1>
-                <p class="text-gray-600 mt-2 font-medium">{{ request.user.business_type }} Store</p>
-                <!-- જો તમારે એડ્રેસ નાખવું હોય તો અહી ઉમેરી શકો -->
+                <!-- 🏪 ડાયનેમિક શોપનું નામ -->
+                <h1 class="text-4xl font-black text-indigo-900 uppercase tracking-wider">{{ invoice.shop.shop_name|default:"SHOP NAME" }}</h1>
+                <p class="text-xs font-bold text-gray-500 tracking-widest mt-1 uppercase">Tax Invoice</p>
+                
+                <div class="mt-4 text-sm text-gray-600 space-y-1">
+                    <!-- જો ભવિષ્યમાં ShopUser મોડલમાં address અને phone ઉમેરો, તો અહી એડ કરી શકાય -->
+                    <p>📧 {{ invoice.shop.email|default:"contact@shop.com" }}</p>
+                </div>
             </div>
             <div class="text-right">
-                <h2 class="text-3xl font-bold text-gray-300">INVOICE</h2>
-                <p class="font-bold text-gray-800 mt-2">Bill No: #INV-{{ invoice.id|stringformat:"04d" }}</p>
-                <p class="text-gray-600">Date: {{ invoice.date|date:"d M Y" }}</p>
+                <h2 class="text-3xl font-bold text-gray-300 uppercase tracking-widest">INVOICE</h2>
+                <div class="mt-4 text-sm text-gray-800 space-y-1">
+                    <p><span class="font-bold text-gray-500">Invoice No:</span> #{{ invoice.id|stringformat:"05d" }}</p>
+                    <p><span class="font-bold text-gray-500">Date:</span> {{ invoice.date|date:"d M Y" }}</p>
+                    <p>
+                        <span class="font-bold text-gray-500">Payment:</span> 
+                        <span class="font-bold {% if invoice.payment_mode == 'UNPAID' %}text-red-600{% else %}text-green-600{% endif %}">
+                            {{ invoice.get_payment_mode_display }}
+                        </span>
+                    </p>
+                </div>
             </div>
         </div>
 
         <!-- Customer Details -->
         <div class="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Billed To:</h3>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Billed To:</h3>
             <p class="text-lg font-bold text-gray-800">{{ invoice.customer_name }}</p>
-            <p class="text-gray-600">Phone: +91 {{ invoice.contact_number }}</p>
+            <p class="text-sm text-gray-600 mt-1">📞 +91 {{ invoice.contact_number }}</p>
             {% if invoice.gst_number %}
-                <p class="text-gray-600">GSTIN: {{ invoice.gst_number }}</p>
+                <p class="text-sm text-gray-600 mt-1">GSTIN: <span class="font-bold">{{ invoice.gst_number }}</span></p>
             {% endif %}
         </div>
 
         <!-- Items Table -->
-        <table class="w-full text-left border-collapse mb-8">
-            <thead>
-                <tr class="border-b-2 border-gray-800 text-sm">
-                    <th class="py-3 font-bold text-gray-800">Sr.</th>
-                    <th class="py-3 font-bold text-gray-800">Item Description</th>
-                    <th class="py-3 font-bold text-gray-800 text-center">Qty</th>
-                    <th class="py-3 font-bold text-gray-800 text-right">Rate</th>
-                    <th class="py-3 font-bold text-gray-800 text-right">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in invoice.items.all %}
-                <tr class="border-b border-gray-200">
-                    <td class="py-4 text-gray-700">{{ forloop.counter }}</td>
-                    <td class="py-4">
-                        <p class="font-bold text-gray-800">{{ item.product.name }}</p>
-                        <p class="text-xs text-gray-500 mt-1">
-                            {% if item.product.serial_number %}Code/SN: {{ item.product.serial_number }} | {% endif %}
-                            {{ item.product.company_name }}
-                        </p>
-                    </td>
-                    <td class="py-4 text-center font-medium text-gray-800">{{ item.quantity }}</td>
-                    <td class="py-4 text-right text-gray-700">₹{{ item.selling_price }}</td>
-                    <td class="py-4 text-right font-bold text-gray-800">₹{{ item.sub_total }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="mb-8 overflow-hidden rounded-lg border border-gray-200">
+            <table class="w-full text-left">
+                <thead class="bg-gray-800 text-white text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="p-3 font-semibold w-12 text-center">#</th>
+                        <th class="p-3 font-semibold">Item Description</th>
+                        <th class="p-3 font-semibold text-center">Qty</th>
+                        <th class="p-3 font-semibold text-right">Price</th>
+                        <th class="p-3 font-semibold text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-sm">
+                    {% for item in invoice.items.all %}
+                    <tr>
+                        <td class="p-3 text-center text-gray-500">{{ forloop.counter }}</td>
+                        <td class="p-3">
+                            <span class="font-bold text-gray-800">{{ item.product.name }}</span>
+                            <br>
+                            <span class="text-xs text-gray-500">{{ item.product.serial_number }}</span>
+                        </td>
+                        <td class="p-3 text-center">{{ item.quantity }}</td>
+                        <td class="p-3 text-right">₹{{ item.selling_price }}</td>
+                        <td class="p-3 text-right font-bold text-gray-800">₹{{ item.sub_total }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <!-- Totals -->
+        <!-- Total Calculation -->
         <div class="flex justify-end">
-            <div class="w-1/2">
-                <div class="flex justify-between py-2 border-b text-gray-600">
-                    <span>Subtotal:</span>
-                    <span>₹{{ invoice.grand_total }}</span>
+            <div class="w-full md:w-1/2 space-y-3">
+                
+                {% if invoice.sgst_percentage > 0 or invoice.cgst_percentage > 0 %}
+                <div class="flex justify-between text-sm text-gray-600 px-3">
+                    <span>Taxable Amount:</span>
+                    <span>₹{{ invoice.grand_total|add:"-0" }}</span>
                 </div>
-                {% if invoice.cgst_percentage > 0 %}
-                <div class="flex justify-between py-2 border-b text-gray-600">
-                    <span>CGST ({{ invoice.cgst_percentage }}%):</span>
-                    <span>Included</span>
-                </div>
-                <div class="flex justify-between py-2 border-b text-gray-600">
+                <div class="flex justify-between text-sm text-gray-600 px-3">
                     <span>SGST ({{ invoice.sgst_percentage }}%):</span>
-                    <span>Included</span>
+                    <span>Applied</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-600 px-3 border-b border-gray-200 pb-3">
+                    <span>CGST ({{ invoice.cgst_percentage }}%):</span>
+                    <span>Applied</span>
                 </div>
                 {% endif %}
-                <div class="flex justify-between py-3 text-xl font-black text-indigo-700 border-b-2 border-indigo-700">
-                    <span>Grand Total:</span>
-                    <span>₹{{ invoice.grand_total }}</span>
+
+                <div class="flex justify-between items-center bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                    <span class="text-lg font-bold text-indigo-900 uppercase">Grand Total:</span>
+                    <span class="text-2xl font-black text-indigo-700">₹{{ invoice.grand_total }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="mt-16 border-t pt-8 text-center text-gray-500 text-sm">
-            <p class="font-bold text-gray-700 mb-1">Thank you for your business!</p>
-            <p>Goods once sold will not be taken back or exchanged.</p>
+        <!-- Footer / Terms -->
+        <div class="mt-12 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
+            <p class="font-bold text-gray-600 mb-1">Terms & Conditions:</p>
+            <p>1. Goods once sold will not be taken back or exchanged.</p>
+            <p>2. Physical damage or liquid damage is not covered under warranty.</p>
+            <p class="mt-4 text-indigo-400 font-bold italic">Thank you for your business!</p>
         </div>
+        
     </div>
-</body>
-</html>
+</div>
+
+<!-- 🟢 WhatsApp Logic (Generic) -->
+<script>
+    function shareWhatsApp() {
+        let phone = "{{ invoice.contact_number }}";
+        
+        if(phone.length === 10) { 
+            phone = "91" + phone; 
+        }
+        
+        let shopName = "{{ invoice.shop.shop_name|default:'Shop'|escapejs }}";
+        
+        let text = `*${shopName.toUpperCase()} - Tax Invoice*\n`;
+        text += `--------------------------------------\n\n`;
+        text += `નમસ્તે *${ '{{ invoice.customer_name }}' }*,\n\n`;
+        text += `અમારી દુકાનની મુલાકાત લેવા બદલ આભાર. તમારું બિલ નીચે મુજબ છે:\n\n`;
+        text += `🧾 *બિલ નંબર:* #${ '{{ invoice.id }}' }\n`;
+        text += `📅 *તારીખ:* ${ '{{ invoice.date|date:"d M Y" }}' }\n`;
+        text += `💰 *કુલ રકમ:* ₹${ '{{ invoice.grand_total }}' }\n`;
+        text += `💳 *પેમેન્ટ:* ${ '{{ invoice.get_payment_mode_display }}' }\n\n`;
+        
+        {% if invoice.payment_mode == 'UNPAID' %}
+        text += `⚠️ *નોંધ:* આ બિલની રકમ ખાતાવહીમાં બાકી તરીકે નોંધવામાં આવી છે.\n\n`;
+        {% endif %}
+        
+        text += `જો તમને કોઈ પ્રશ્ન હોય, તો અમારો સંપર્ક કરી શકો છો.\n`;
+        text += `આપનો દિવસ શુભ રહે! 🙏`;
+        
+        let url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+</script>
+{% endblock %}

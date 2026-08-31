@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Khata Book - SmartShop{% endblock %}
+{% block header_title %}Khata Book / Ledger (ખાતાવહી){% endblock %}
+
+{% block content %}
+<div class="space-y-6 animate-fade-in-up max-w-6xl mx-auto">
+    
+    <!-- Top Bar & Outstanding Summary -->
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <!-- માર્કેટમાં બાકી લેણાંનું કાર્ડ -->
+        <div class="bg-red-50 border border-red-200 rounded-xl p-5 flex items-center gap-4 shadow-sm w-full md:w-1/3">
+            <div class="bg-red-100 p-3 rounded-full"><span class="material-icons text-red-600 text-3xl">account_balance_wallet</span></div>
+            <div>
+                <p class="text-red-700 text-xs font-bold uppercase">માર્કેટમાં લેવાના બાકી (Total Outstanding)</p>
+                <h3 class="text-3xl font-black text-red-900">₹{{ total_market_outstanding }}</h3>
+            </div>
+        </div>
+
+        <button onclick="document.getElementById('customerModal').classList.remove('hidden')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow-md transition font-bold flex items-center gap-2">
+            <span class="material-icons">person_add</span> નવું ખાતું ખોલો (Add Customer)
+        </button>
+    </div>
+
+    <!-- Customers List Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                <tr>
+                    <th class="p-4 font-semibold">ગ્રાહકનું નામ (Customer)</th>
+                    <th class="p-4 font-semibold">સંપર્ક (Phone)</th>
+                    <th class="p-4 font-semibold text-right">બાકી રકમ (Balance)</th>
+                    <th class="p-4 font-semibold text-center">એક્શન (Action)</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm">
+                {% for customer in customers %}
+                <tr class="hover:bg-gray-50 transition cursor-pointer" onclick="window.location.href='{% url 'khata_detail' customer.id %}'">
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800 text-base">{{ customer.name }}</div>
+                        <div class="text-xs text-gray-400 mt-1">ખાતું ખૂલ્યા તારીખ: {{ customer.created_at|date:"d M Y" }}</div>
+                    </td>
+                    <td class="p-4 font-medium text-gray-600">📞 {{ customer.phone }}</td>
+                    <td class="p-4 text-right">
+                        {% if customer.total_balance > 0 %}
+                            <span class="text-red-600 font-black text-lg">₹{{ customer.total_balance }}</span>
+                            <span class="text-xs block text-red-400 font-bold">લેવાના બાકી</span>
+                        {% elif customer.total_balance < 0 %}
+                            <span class="text-green-600 font-black text-lg">₹{{ customer.total_balance|cut:"-" }}</span>
+                            <span class="text-xs block text-green-500 font-bold">એડવાન્સ જમા</span>
+                        {% else %}
+                            <span class="text-gray-400 font-bold text-lg">₹0.00</span>
+                            <span class="text-xs block text-gray-400">હિસાબ ક્લિયર</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4 text-center">
+                        <a href="{% url 'khata_detail' customer.id %}" class="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded text-xs font-bold hover:bg-indigo-100 transition inline-flex items-center gap-1" onclick="event.stopPropagation();">
+                            <span class="material-icons text-sm">visibility</span> હિસાબ જુઓ
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="p-8 text-center text-gray-500">
+                        <span class="material-icons text-4xl text-gray-300 mb-2">menu_book</span><br>
+                        કોઈ ખાતું ખોલવામાં આવ્યું નથી. "નવું ખાતું ખોલો" પર ક્લિક કરો.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Customer Modal -->
+<div id="customerModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-fade-in-up">
+        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-indigo-50">
+            <h3 class="text-lg font-bold text-indigo-900 flex items-center gap-2"><span class="material-icons">person_add</span> નવું ખાતું ખોલો</h3>
+            <button onclick="document.getElementById('customerModal').classList.add('hidden')" class="text-gray-400 hover:text-red-500"><span class="material-icons">close</span></button>
+        </div>
+        
+        <form action="{% url 'add_khata_customer' %}" method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+            <div><label class="block text-sm font-bold text-gray-700 mb-1">ગ્રાહકનું નામ *</label><input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+            <div><label class="block text-sm font-bold text-gray-700 mb-1">મોબાઇલ નંબર *</label><input type="text" name="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+            <div><label class="block text-sm font-bold text-gray-700 mb-1">સરનામું / વિગત (Optional)</label><textarea name="address" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea></div>
+            
+            <div class="pt-4 flex justify-end gap-3 border-t">
+                <button type="button" onclick="document.getElementById('customerModal').classList.add('hidden')" class="px-5 py-2 text-gray-600 hover:bg-gray-100 rounded-lg border font-bold">Cancel</button>
+                <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow-md font-bold">ખાતું ખોલો</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
