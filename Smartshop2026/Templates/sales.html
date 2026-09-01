@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Point of Sale | SmartShop{% endblock %}
-{% block header_title %}Point of Sale (Billing){% endblock %}
+{% block title %}{% trans "Point of Sale | SmartShop" %}{% endblock %}
+{% block header_title %}{% trans "Point of Sale (Billing)" %}{% endblock %}
 
 {% block content %}
 <form id="billing-form" method="POST" action="{% url 'generate_bill' %}" class="flex flex-col lg:flex-row gap-6 h-full">
@@ -12,18 +13,18 @@
         
         <!-- કસ્ટમરની વિગતો -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Customer Details</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">{% trans "Customer Details" %}</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Customer Name" %} *</label>
                     <input type="text" name="customer_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Contact Number" %} *</label>
                     <input type="tel" name="contact_number" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">GST Number (Optional)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "GST Number" %} ({% trans "Optional" %})</label>
                     <input type="text" name="gst_number" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
             </div>
@@ -31,15 +32,15 @@
 
         <!-- પ્રોડક્ટ એડ કરવા માટેનું બોક્સ (HTMX) -->
         <div class="bg-indigo-50 rounded-xl shadow-sm p-6 border border-indigo-100">
-            <h3 class="text-lg font-bold text-indigo-900 mb-4">Add Item to Cart</h3>
+            <h3 class="text-lg font-bold text-indigo-900 mb-4">{% trans "Add Item to Cart" %}</h3>
             <div class="space-y-4">
                 
                 <!-- સ્કેનર બટન અને ડ્રોપડાઉન એકસાથે -->
                 <div class="flex items-end gap-2">
                     <div class="flex-1">
-                        <label class="block text-sm font-medium text-indigo-800 mb-1">Select Product / Scan</label>
+                        <label class="block text-sm font-medium text-indigo-800 mb-1">{% trans "Select Product / Scan" %}</label>
                         <select id="product_id" name="product_id" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                            <option value="">-- Search & Select --</option>
+                            <option value="">-- {% trans "Search & Select" %} --</option>
                             {% for product in products %}
                                 {% if product.current_stock > 0 %}
                                     <option value="{{ product.id }}">{{product.serial_number}} - {{ product.name }} - ₹{{ product.selling_price }}</option>
@@ -49,13 +50,13 @@
                     </div>
                     
                     <!-- નવું સ્કેન બટન -->
-                    <button type="button" onclick="openScanner()" title="Scan Barcode/IMEI" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center justify-center shadow-md transition h-[42px]">
+                    <button type="button" onclick="openScanner()" title="{% trans 'Scan Barcode / IMEI' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center justify-center shadow-md transition h-[42px]">
                         <span class="material-icons">qr_code_scanner</span>
                     </button>
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-indigo-800 mb-1">Quantity</label>
+                    <label class="block text-sm font-medium text-indigo-800 mb-1">{% trans "Quantity" %}</label>
                     <input type="number" id="quantity" name="quantity" value="1" min="1" class="w-full px-4 py-2 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
                 </div>
                 
@@ -68,7 +69,7 @@
                         hx-swap="beforeend" 
                         hx-include="#product_id, #quantity">
                     <span class="material-icons">add_shopping_cart</span>
-                    Add to Bill
+                    {% trans "Add to Bill" %}
                 </button>
             </div>
         </div>
@@ -82,11 +83,11 @@
             <table class="w-full text-left border-collapse">
                 <thead class="bg-gray-50 sticky top-0 border-b border-gray-200">
                     <tr>
-                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Item</th>
-                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Qty</th>
-                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">Subtotal</th>
-                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">Action</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{% trans "Item" %}</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{% trans "Qty" %}</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{% trans "Price" %}</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider">{% trans "Subtotal" %}</th>
+                        <th class="py-3 px-4 text-xs font-semibold text-gray-600 uppercase tracking-wider text-center">{% trans "Action" %}</th>
                     </tr>
                 </thead>
                 <tbody id="itemTableBody" class="divide-y divide-gray-100">
@@ -100,17 +101,17 @@
             <div class="flex flex-col sm:flex-row justify-between items-end gap-4">
                 <div class="flex gap-4 w-full sm:w-auto">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">SGST (%)</label>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">{% trans "SGST" %} (%)</label>
                         <input type="number" id="sgst" name="sgst" value="0" min="0" step="0.01" class="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-indigo-500 text-center bg-white">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">CGST (%)</label>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase mb-1">{% trans "CGST" %} (%)</label>
                         <input type="number" id="cgst" name="cgst" value="0" min="0" step="0.01" class="w-24 px-3 py-2 border border-gray-300 rounded-lg outline-none focus:border-indigo-500 text-center bg-white">
                     </div>
                 </div>
                 
                 <div class="text-right w-full sm:w-auto">
-                    <p class="text-sm font-medium text-gray-500 mb-1">Grand Total</p>
+                    <p class="text-sm font-medium text-gray-500 mb-1">{% trans "Grand Total" %}</p>
                     <input type="text" id="grand_total" name="grand_total" value="0.00" readonly class="text-4xl font-bold text-gray-800 bg-transparent border-none outline-none text-right w-48 pointer-events-none">
                 </div>
             </div>
@@ -119,30 +120,30 @@
             <!-- 💳 PAYMENT MODE SELECTION -->
             <!-- ========================================== -->
             <div class="mt-4 mb-2">
-                <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">પેમેન્ટ કેવી રીતે આવ્યું? <span class="text-red-500">*</span></label>
+                <label class="block text-xs font-semibold text-gray-500 uppercase mb-2">{% trans "Payment Mode" %} <span class="text-red-500">*</span></label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <label class="cursor-pointer">
                         <input type="radio" name="payment_mode" value="CASH" autocomplete="off" class="peer hidden" onchange="enableInvoiceBtn()">
                         <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 hover:bg-gray-50 transition font-bold text-sm">
-                            💵 Cash
+                            💵 {% trans "Cash" %}
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" name="payment_mode" value="UPI" class="peer hidden" onchange="enableInvoiceBtn()">
                         <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-indigo-500 peer-checked:bg-indigo-50 peer-checked:text-indigo-700 hover:bg-gray-50 transition font-bold text-sm">
-                            📱 UPI
+                            📱 {% trans "UPI" %}
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" name="payment_mode" value="CARD" class="peer hidden" onchange="enableInvoiceBtn()">
                         <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:text-blue-700 hover:bg-gray-50 transition font-bold text-sm">
-                            💳 Card
+                            💳 {% trans "Card" %}
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" name="payment_mode" value="UNPAID" class="peer hidden" onchange="enableInvoiceBtn()">
                         <div class="border border-gray-300 rounded-lg p-2 text-center peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 hover:bg-gray-50 transition font-bold text-sm">
-                            📝 ઉધાર (બાકી)
+                            📝 {% trans "Udhar" %}
                         </div>
                     </label>
                 </div>
@@ -150,7 +151,7 @@
             
             <button type="submit" id="generateInvoiceBtn" disabled class="w-full mt-6 bg-gray-300 text-gray-500 cursor-not-allowed font-bold py-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-lg">
                 <span class="material-icons">receipt_long</span>
-                પેમેન્ટ સિલેક્ટ કરો...
+                {% trans "Select Payment Mode..." %}
             </button>
         </div>
     </div>
@@ -160,12 +161,12 @@
 <div id="scannerModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden flex items-center justify-center px-4">
     <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
         <div class="bg-indigo-900 px-4 py-3 flex justify-between items-center text-white">
-            <h3 class="font-bold flex items-center gap-2"><span class="material-icons">qr_code_scanner</span> Scan Barcode / IMEI</h3>
+            <h3 class="font-bold flex items-center gap-2"><span class="material-icons">qr_code_scanner</span> {% trans "Scan Barcode / IMEI" %}</h3>
             <button type="button" onclick="closeScanner()" class="text-red-400 hover:text-red-300 font-bold text-2xl">&times;</button>
         </div>
         <div class="p-4">
             <div id="reader" class="w-full overflow-hidden rounded-lg"></div>
-            <p class="text-center text-xs text-gray-500 mt-4">તમારા કેમેરા સામે પ્રોડક્ટનો બારકોડ કે IMEI ધરો. સ્કેન થતા જ તે સીધું બિલમાં એડ થઈ જશે.</p>
+            <p class="text-center text-xs text-gray-500 mt-4">{% trans "Point your camera at the product barcode or IMEI. It will be added to the bill automatically." %}</p>
         </div>
     </div>
 </div>
@@ -173,7 +174,6 @@
 <!-- લાઈબ્રેરી -->
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
-<!-- JS for Live Total Calculation & Scanner -->
 <!-- JS for Live Total Calculation & Scanner -->
 <script>
     // ------------------------------------------------
@@ -254,7 +254,7 @@
             qtyInput.focus(); // કર્સર સીધું ક્વોન્ટિટી બોક્સમાં લઈ જાવ
             qtyInput.select(); // પહેલેથી લખેલો 1 સિલેક્ટ થઈ જશે, જેથી યુઝર સીધો નવો આંકડો જ ટાઈપ કરી શકે
         } else {
-            alert("❌ પ્રોડક્ટ મળતી નથી! (આ બારકોડ: " + decodedText + " ઇન્વેન્ટરીમાં નથી અથવા તેનો સ્ટોક ૦ છે.)");
+            alert("{% trans 'Product not found!' %} (" + decodedText + ")");
         }
     }
 
@@ -278,7 +278,7 @@
         if(generateBtn) {
             generateBtn.disabled = true;
             generateBtn.className = "w-full mt-6 bg-gray-300 text-gray-500 cursor-not-allowed font-bold py-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 text-lg";
-            generateBtn.innerHTML = '<span class="material-icons">receipt_long</span> પેમેન્ટ સિલેક્ટ કરો...';
+            generateBtn.innerHTML = '<span class="material-icons">receipt_long</span> {% trans "Select Payment Mode..." %}';
         }
 
         // ૩. જ્યારે યુઝર કોઈ પણ પેમેન્ટ મોડ સિલેક્ટ કરે, ત્યારે બટન એક્ટિવ કરો
@@ -295,7 +295,7 @@
                     generateBtn.classList.add('bg-green-600', 'hover:bg-green-700', 'text-white', 'shadow-lg');
                     
                     // બટનનું લખાણ બદલો
-                    generateBtn.innerHTML = '<span class="material-icons">receipt</span> Generate Invoice';
+                    generateBtn.innerHTML = '<span class="material-icons">receipt</span> {% trans "Generate Invoice" %}';
                 }
             });
         });

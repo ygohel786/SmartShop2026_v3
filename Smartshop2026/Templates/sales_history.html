@@ -1,72 +1,79 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Sales History | SmartShop" %}{% endblock %}
+{% block header_title %}{% trans "Sales History / Reports" %}{% endblock %}
+
 {% block content %}
-<div class="p-4 md:p-8">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Sales History / Reports</h2>
-        <a href="{% url 'sales' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium shadow">
-            + Create New Bill
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 animate-fade-in-up">
+    
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4 border-b pb-4">
+        <h2 class="text-xl font-bold text-gray-800">{% trans "Sales History / Reports" %}</h2>
+        <a href="{% url 'sales' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition font-medium flex items-center gap-2 shadow-sm">
+            <span class="material-icons text-sm">add</span> {% trans "Create New Bill" %}
         </a>
     </div>
 
     <!-- Filter Section -->
-    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
-        <form method="GET" action="{% url 'sales_history' %}" class="flex flex-wrap gap-4 items-end">
-            <div>
-                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Start Date</label>
-                <input type="date" name="start_date" value="{{ request.GET.start_date }}" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-            </div>
-            <div>
-                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">End Date</label>
-                <input type="date" name="end_date" value="{{ request.GET.end_date }}" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-            </div>
-            <div class="flex-grow">
-                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Search (Customer, Product, Bill No)</label>
-                <input type="text" name="search" value="{{ request.GET.search }}" placeholder="Search here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-            </div>
-            <div class="flex gap-2">
-                <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition">Filter</button>
-                <a href="{% url 'sales_history' %}" class="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg font-medium hover:bg-gray-200 transition border">Clear</a>
-            </div>
-        </form>
-    </div>
+    <form method="GET" class="flex flex-wrap items-end gap-4 mb-6">
+        <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Start Date" %}</label>
+            <input type="date" name="start_date" value="{{ start_date }}" class="px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div>
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "End Date" %}</label>
+            <input type="date" name="end_date" value="{{ end_date }}" class="px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div class="flex-1 min-w-[200px]">
+            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">{% trans "Search (Customer, Product, Bill No)" %}</label>
+            <input type="text" name="search" value="{{ search_query }}" placeholder="{% trans 'Search here...' %}" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-bold shadow-md transition">{% trans "Filter" %}</button>
+            <a href="{% url 'sales_history' %}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-5 py-2 rounded-lg font-bold border transition">{% trans "Clear" %}</a>
+        </div>
+    </form>
 
-    <!-- Sales Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+    <!-- Table -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse min-w-[800px]">
             <thead>
-                <tr class="bg-gray-50 text-gray-600 border-b text-sm uppercase">
-                    <th class="p-4 font-semibold">Bill No</th>
-                    <th class="p-4 font-semibold">Date</th>
-                    <th class="p-4 font-semibold">Customer Name</th>
-                    <th class="p-4 font-semibold">Items Sold</th>
-                    <th class="p-4 font-semibold text-right">Grand Total</th>
-                    <th class="p-4 font-semibold text-center">Action</th>
+                <tr class="bg-gray-50 text-gray-600 border-y border-gray-200 text-xs font-bold uppercase tracking-wider">
+                    <th class="p-4">{% trans "Bill No" %}</th>
+                    <th class="p-4">{% trans "Date" %}</th>
+                    <th class="p-4">{% trans "Customer Name" %}</th>
+                    <th class="p-4">{% trans "Items Sold" %}</th>
+                    <th class="p-4 text-right">{% trans "Grand Total" %}</th>
+                    <th class="p-4 text-center">{% trans "Action" %}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100 text-sm">
                 {% for invoice in invoices %}
-                <tr class="border-b hover:bg-gray-50 transition">
+                <tr class="hover:bg-indigo-50/50 transition">
                     <td class="p-4 font-bold text-indigo-600">#INV-{{ invoice.id|stringformat:"04d" }}</td>
-                    <td class="p-4">{{ invoice.date|date:"d M Y" }}</td>
-                    <td class="p-4 font-medium text-gray-800">
-                        {{ invoice.customer_name }}
+                    <td class="p-4 text-gray-800">{{ invoice.date|date:"d M Y" }}</td>
+                    <td class="p-4">
+                        <div class="font-bold text-gray-800">{{ invoice.customer_name }}</div>
                         <div class="text-xs text-gray-500">{{ invoice.contact_number }}</div>
                     </td>
-                    <td class="p-4 text-sm text-gray-600">
+                    <td class="p-4 text-gray-600 text-xs">
                         {% for item in invoice.items.all %}
                             {{ item.product.name }} (x{{ item.quantity }})<br>
                         {% endfor %}
                     </td>
-                    <td class="p-4 font-bold text-green-600 text-right">₹{{ invoice.grand_total }}</td>
+                    <td class="p-4 text-right font-black text-green-600 text-base">₹{{ invoice.grand_total }}</td>
                     <td class="p-4 text-center">
-                        <a href="{% url 'print_invoice' invoice.id %}" target="_blank" class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded hover:bg-indigo-100 transition font-medium text-sm">
-                            <span class="material-icons text-sm">print</span> View / Print
+                        <a href="{% url 'print_invoice' invoice.id %}" target="_blank" class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded text-xs font-bold transition flex justify-center items-center gap-1">
+                            <span class="material-icons text-sm">print</span> {% trans "View / Print" %}
                         </a>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="6" class="p-8 text-center text-gray-500">No sales records found for the selected filters.</td>
+                    <td colspan="6" class="p-10 text-center text-gray-500 font-medium">
+                        <span class="material-icons text-4xl text-gray-300 block mb-2">receipt_long</span>
+                        {% trans "No bills found matching your criteria." %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

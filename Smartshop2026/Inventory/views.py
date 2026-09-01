@@ -414,7 +414,12 @@ def sales_history(request):
             Q(items__product__name__icontains=search_query)
         ).distinct()
         
-    return render(request, 'sales_history.html', {'invoices': invoices})
+    return render(request, 'sales_history.html', {
+        'invoices': invoices,
+        'start_date': start_date,
+        'end_date': end_date,
+        'search_query': search_query
+    })
 
 
 @login_required

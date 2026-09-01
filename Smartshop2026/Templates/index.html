@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login | SmartShop</title>
+    <title>{% trans "Login | SmartShop" %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
@@ -11,7 +12,7 @@
     <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-100">
         <div class="text-center mb-8">
             <h1 class="text-3xl font-bold text-indigo-900 mb-2">SmartShop</h1>
-            <p class="text-gray-500">Sign in to manage your store</p>
+            <p class="text-gray-500">{% trans "Sign in to manage your store" %}</p>
         </div>
         
         {% if messages %}
@@ -25,20 +26,20 @@
         <form method="POST" action="{% url 'index' %}" class="space-y-5">
             {% csrf_token %}
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Username" %}</label>
                 <input type="text" name="username" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Password" %}</label>
                 <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
             </div>
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow-md">
-                Sign In
+                {% trans "Sign In" %}
             </button>
         </form>
         
         <p class="mt-6 text-center text-sm text-gray-600">
-            Don't have an account? <a href="{% url 'signup' %}" class="text-indigo-600 font-semibold hover:underline">Register here</a>
+            {% trans "Don't have an account?" %} <a href="{% url 'signup' %}" class="text-indigo-600 font-semibold hover:underline">{% trans "Register here" %}</a>
         </p>
     </div>
 </body>

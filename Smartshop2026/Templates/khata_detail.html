@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}{{ customer.name }} - Khata{% endblock %}
-{% block header_title %}Customer Ledger (ગ્રાહકનો હિસાબ){% endblock %}
+{% load i18n %}
+
+{% block title %}{{ customer.name }} - {% trans "Khata" %}{% endblock %}
+{% block header_title %}{% trans "Customer Ledger" %}{% endblock %}
 
 {% block content %}
 <div class="space-y-6 animate-fade-in-up max-w-6xl mx-auto">
@@ -15,82 +17,82 @@
             </div>
         </div>
         <div class="mt-4 md:mt-0 text-right">
-            <p class="text-sm font-bold text-gray-500 uppercase">વર્તમાન બેલેન્સ</p>
+            <p class="text-sm font-bold text-gray-500 uppercase">{% trans "Current Balance" %}</p>
             {% if customer.total_balance > 0 %}
                 <h2 class="text-3xl font-black text-red-600">₹{{ customer.total_balance }}</h2>
-                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-bold">લેવાના બાકી છે</span>
+                <span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded font-bold">{% trans "To Collect" %}</span>
             {% elif customer.total_balance < 0 %}
                 <h2 class="text-3xl font-black text-green-600">₹{{ customer.total_balance|cut:"-" }}</h2>
-                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">એડવાન્સ જમા છે</span>
+                <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-bold">{% trans "Advance Paid" %}</span>
             {% else %}
                 <h2 class="text-3xl font-black text-gray-400">₹0.00</h2>
-                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-bold">હિસાબ ક્લિયર</span>
+                <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-bold">{% trans "Account Settled" %}</span>
             {% endif %}
         </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- Left: એન્ટ્રી કરવાનું ફોર્મ -->
+        <!-- Left: Entry Form -->
         <div class="lg:col-span-1">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
                 <h3 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center gap-2">
-                    <span class="material-icons text-indigo-600">edit_note</span> નવી એન્ટ્રી કરો
+                    <span class="material-icons text-indigo-600">edit_note</span> {% trans "Add New Entry" %}
                 </h3>
                 
                 <form action="{% url 'add_khata_transaction' customer.id %}" method="POST" class="space-y-4">
                     {% csrf_token %}
                     
-                    <!-- Radio Buttons (લાલ અને લીલા) -->
+                    <!-- Radio Buttons -->
                     <div class="grid grid-cols-2 gap-3 mb-2">
                         <label class="cursor-pointer">
                             <input type="radio" name="transaction_type" value="GIVEN" required class="peer hidden">
                             <div class="border-2 border-gray-200 rounded-lg p-3 text-center peer-checked:border-red-500 peer-checked:bg-red-50 hover:bg-gray-50 transition">
                                 <span class="material-icons text-red-500 block mb-1">arrow_upward</span>
-                                <span class="font-bold text-red-700 text-sm block">ઉધાર આપ્યા</span>
-                                <span class="text-[10px] text-gray-500">(માલ આપ્યો / બાકી)</span>
+                                <span class="font-bold text-red-700 text-sm block">{% trans "Given (Udhar)" %}</span>
+                                <span class="text-[10px] text-gray-500">{% trans "(Goods given / Due)" %}</span>
                             </div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="transaction_type" value="RECEIVED" required class="peer hidden">
                             <div class="border-2 border-gray-200 rounded-lg p-3 text-center peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50 transition">
                                 <span class="material-icons text-green-500 block mb-1">arrow_downward</span>
-                                <span class="font-bold text-green-700 text-sm block">જમા લીધા</span>
-                                <span class="text-[10px] text-gray-500">(પેમેન્ટ આવ્યું)</span>
+                                <span class="font-bold text-green-700 text-sm block">{% trans "Received (Jama)" %}</span>
+                                <span class="text-[10px] text-gray-500">{% trans "(Payment received)" %}</span>
                             </div>
                         </label>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">રકમ (₹) *</label>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">{% trans "Amount" %} (₹) *</label>
                         <input type="number" step="0.01" name="amount" required min="1" class="w-full px-4 py-3 border border-gray-300 rounded-lg text-xl font-bold text-gray-800">
                     </div>
                     
                     <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-1">વિગત / નોંધ (Description) *</label>
-                        <input type="text" name="description" required placeholder="દા.ત. ડિસ્પ્લે નાખી, રોકડા આપ્યા..." class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        <label class="block text-sm font-bold text-gray-700 mb-1">{% trans "Description / Note" %} *</label>
+                        <input type="text" name="description" required placeholder="{% trans 'e.g. Sold display, Received cash...' %}" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     </div>
                     
                     <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow mt-2 text-lg">
-                        એન્ટ્રી સેવ કરો
+                        {% trans "Save Entry" %}
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- Right: હિસાબની લેવડ-દેવડનું ટેબલ -->
+        <!-- Right: Transaction History Table -->
         <div class="lg:col-span-2">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="bg-gray-50 p-4 border-b border-gray-100 flex justify-between items-center">
-                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><span class="material-icons text-indigo-600">receipt_long</span> લેવડ-દેવડ હિસ્ટ્રી</h3>
+                    <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2"><span class="material-icons text-indigo-600">receipt_long</span> {% trans "Transaction History" %}</h3>
                 </div>
                 
                 <table class="w-full text-left">
                     <thead class="bg-white text-gray-500 text-xs uppercase border-b">
                         <tr>
-                            <th class="p-4 font-semibold w-1/4">તારીખ</th>
-                            <th class="p-4 font-semibold w-2/4">વિગત</th>
-                            <th class="p-4 font-semibold text-right w-1/4">રકમ (₹)</th>
+                            <th class="p-4 font-semibold w-1/4">{% trans "Date" %}</th>
+                            <th class="p-4 font-semibold w-2/4">{% trans "Description" %}</th>
+                            <th class="p-4 font-semibold text-right w-1/4">{% trans "Amount" %} (₹)</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 text-sm">
@@ -100,9 +102,9 @@
                             <td class="p-4">
                                 <div class="font-bold text-gray-800">{{ txn.description }}</div>
                                 {% if txn.transaction_type == 'GIVEN' %}
-                                    <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold uppercase mt-1 inline-block">ઉધાર આપ્યા</span>
+                                    <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded font-bold uppercase mt-1 inline-block">{% trans "Given" %}</span>
                                 {% else %}
-                                    <span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded font-bold uppercase mt-1 inline-block">જમા લીધા</span>
+                                    <span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded font-bold uppercase mt-1 inline-block">{% trans "Received" %}</span>
                                 {% endif %}
                             </td>
                             <td class="p-4 text-right">
@@ -116,7 +118,7 @@
                         {% empty %}
                         <tr>
                             <td colspan="3" class="p-8 text-center text-gray-400">
-                                હજુ સુધી કોઈ લેવડ-દેવડ થયેલ નથી.
+                                {% trans "No transactions found yet." %}
                             </td>
                         </tr>
                         {% endfor %}

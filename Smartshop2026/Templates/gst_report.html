@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
-{% block title %}GST Tax Report - SmartShop{% endblock %}
-{% block header_title %}GST Sales & Tax Report{% endblock %}
+{% load i18n %}
+
+{% block title %}{% trans "GST Tax Report - SmartShop" %}{% endblock %}
+{% block header_title %}{% trans "GST Sales & Tax Report" %}{% endblock %}
 
 {% block content %}
 <div class="max-w-7xl mx-auto space-y-6">
@@ -8,23 +10,23 @@
     <!-- Top Bar & Filters -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
         <div>
-            <h2 class="text-xl font-black text-gray-800">📊 GST Return Summary</h2>
-            <p class="text-gray-500 text-sm mt-0.5">તમારા ગ્રાહકો પાસેથી ઉઘરાવેલ CGST અને SGST નો મહિનો કે તારીખ મુજબનો હિસાબ.</p>
+            <h2 class="text-xl font-black text-gray-800">📊 {% trans "GST Return Summary" %}</h2>
+            <p class="text-gray-500 text-sm mt-0.5">{% trans "Month or Date wise calculation of CGST and SGST collected from your customers." %}</p>
         </div>
         
         <!-- Filter Form -->
         <form method="GET" class="flex items-center gap-3 w-full md:w-auto">
             <div>
-                <label class="block text-[10px] uppercase font-bold text-gray-400">From Date</label>
+                <label class="block text-[10px] uppercase font-bold text-gray-400">{% trans "From Date" %}</label>
                 <input type="date" name="start_date" value="{{ start_date }}" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500">
             </div>
             <div>
-                <label class="block text-[10px] uppercase font-bold text-gray-400">To Date</label>
+                <label class="block text-[10px] uppercase font-bold text-gray-400">{% trans "To Date" %}</label>
                 <input type="date" name="end_date" value="{{ end_date }}" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500">
             </div>
             <div class="flex items-end gap-2 mt-4">
-                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded-lg text-sm transition">Filter</button>
-                <a href="{% url 'gst_report' %}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold px-3 py-1.5 rounded-lg text-sm transition">Reset</a>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded-lg text-sm transition">{% trans "Filter" %}</button>
+                <a href="{% url 'gst_report' %}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold px-3 py-1.5 rounded-lg text-sm transition">{% trans "Reset" %}</a>
             </div>
         </form>
     </div>
@@ -32,19 +34,19 @@
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-            <span class="text-xs font-bold text-gray-400 uppercase">Total Taxable Sales</span>
+            <span class="text-xs font-bold text-gray-400 uppercase">{% trans "Total Taxable Sales" %}</span>
             <h3 class="text-2xl font-black text-gray-800 mt-1">₹{{ total_taxable_amount|floatformat:2 }}</h3>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-            <span class="text-xs font-bold text-indigo-500 uppercase">Total CGST Collected</span>
+            <span class="text-xs font-bold text-indigo-500 uppercase">{% trans "Total CGST Collected" %}</span>
             <h3 class="text-2xl font-black text-indigo-600 mt-1">₹{{ total_cgst_collected|floatformat:2 }}</h3>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-            <span class="text-xs font-bold text-blue-500 uppercase">Total SGST Collected</span>
+            <span class="text-xs font-bold text-blue-500 uppercase">{% trans "Total SGST Collected" %}</span>
             <h3 class="text-2xl font-black text-blue-600 mt-1">₹{{ total_sgst_collected|floatformat:2 }}</h3>
         </div>
         <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm bg-indigo-50/40">
-            <span class="text-xs font-bold text-indigo-700 uppercase">Total Invoice Value</span>
+            <span class="text-xs font-bold text-indigo-700 uppercase">{% trans "Total Invoice Value" %}</span>
             <h3 class="text-2xl font-black text-indigo-900 mt-1">₹{{ total_grand_total|floatformat:2 }}</h3>
         </div>
     </div>
@@ -52,23 +54,23 @@
     <!-- Table Data -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="font-bold text-gray-700">Invoice Tax Breakdown</h3>
+            <h3 class="font-bold text-gray-700">{% trans "Invoice Tax Breakdown" %}</h3>
             <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
-                <span class="material-icons text-sm">print</span> Print / Save PDF
+                <span class="material-icons text-sm">print</span> {% trans "Print / Save PDF" %}
             </button>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left whitespace-nowrap">
                 <thead class="bg-gray-50/50 text-gray-500 text-xs uppercase border-b">
                     <tr>
-                        <th class="px-6 py-3 font-semibold">Inv #</th>
-                        <th class="px-6 py-3 font-semibold">Date</th>
-                        <th class="px-6 py-3 font-semibold">Customer Name</th>
-                        <th class="px-6 py-3 font-semibold">GSTIN</th>
-                        <th class="px-6 py-3 font-semibold text-right">Taxable Amt (₹)</th>
-                        <th class="px-6 py-3 font-semibold text-right">CGST (₹)</th>
-                        <th class="px-6 py-3 font-semibold text-right">SGST (₹)</th>
-                        <th class="px-6 py-3 font-semibold text-right">Total Bill (₹)</th>
+                        <th class="px-6 py-3 font-semibold">{% trans "Inv #" %}</th>
+                        <th class="px-6 py-3 font-semibold">{% trans "Date" %}</th>
+                        <th class="px-6 py-3 font-semibold">{% trans "Customer Name" %}</th>
+                        <th class="px-6 py-3 font-semibold">{% trans "GSTIN" %}</th>
+                        <th class="px-6 py-3 font-semibold text-right">{% trans "Taxable Amt" %} (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">{% trans "CGST" %} (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">{% trans "SGST" %} (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">{% trans "Total Bill" %} (₹)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm">
@@ -87,7 +89,7 @@
                     <tr>
                         <td colspan="8" class="p-8 text-center text-gray-400">
                             <span class="material-icons text-4xl block mb-2 opacity-50">receipt_long</span>
-                            કોઈ જીએસટી રેકોર્ડ મળ્યો નથી.
+                            {% trans "No GST invoice records found." %}
                         </td>
                     </tr>
                     {% endfor %}

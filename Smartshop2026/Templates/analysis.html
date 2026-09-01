@@ -1,33 +1,35 @@
 {% extends 'base.html' %}
+{% load i18n %}
+
 {% block content %}
 <div class="p-4 md:p-8 max-w-7xl mx-auto space-y-8 animate-fade-in-up">
     
     <!-- Header -->
     <div>
-        <h2 class="text-3xl font-black text-gray-800 tracking-tight">Analytics & Buying Suggestions</h2>
-        <p class="text-gray-500 mt-1">Smart Demand Forecasting System based on Machine Learning & Trends</p>
+        <h2 class="text-3xl font-black text-gray-800 tracking-tight">{% trans "Analytics & Buying Suggestions" %}</h2>
+        <p class="text-gray-500 mt-1">{% trans "Smart Demand Forecasting System based on Machine Learning & Trends" %}</p>
     </div>
 
-    <!-- 1. નફો અને આવક Cards -->
+    <!-- 1. Revenue & Profit Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500 flex items-center gap-4 hover:shadow-md transition">
             <div class="p-4 bg-blue-50 text-blue-600 rounded-xl"><span class="material-icons text-3xl">account_balance_wallet</span></div>
             <div>
-                <p class="text-sm font-bold text-gray-500 uppercase">Total Revenue</p>
+                <p class="text-sm font-bold text-gray-500 uppercase">{% trans "Total Revenue" %}</p>
                 <h3 class="text-2xl font-black text-gray-800">₹{{ total_revenue|floatformat:2 }}</h3>
             </div>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 flex items-center gap-4 hover:shadow-md transition">
             <div class="p-4 bg-green-50 text-green-600 rounded-xl"><span class="material-icons text-3xl">trending_up</span></div>
             <div>
-                <p class="text-sm font-bold text-gray-500 uppercase">Total Net Profit</p>
+                <p class="text-sm font-bold text-gray-500 uppercase">{% trans "Total Net Profit" %}</p>
                 <h3 class="text-2xl font-black text-green-600">₹{{ total_profit|floatformat:2 }}</h3>
             </div>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-purple-500 flex items-center gap-4 hover:shadow-md transition">
             <div class="p-4 bg-purple-50 text-purple-600 rounded-xl"><span class="material-icons text-3xl">receipt_long</span></div>
             <div>
-                <p class="text-sm font-bold text-gray-500 uppercase">Total Bills</p>
+                <p class="text-sm font-bold text-gray-500 uppercase">{% trans "Total Bills" %}</p>
                 <h3 class="text-2xl font-black text-gray-800">{{ total_invoices }}</h3>
             </div>
         </div>
@@ -39,8 +41,8 @@
             <div class="flex items-center gap-3 mb-6 border-b pb-4">
                 <span class="material-icons text-3xl text-indigo-600">psychology</span>
                 <div>
-                    <h3 class="text-xl font-black text-gray-800">Master Buying Suggestion (Top 25)</h3>
-                    <p class="text-xs text-gray-500 font-bold uppercase">AI Analyzed based on Seasonality, Current Trend & History</p>
+                    <h3 class="text-xl font-black text-gray-800">{% trans "Master Buying Suggestion (Top 25)" %}</h3>
+                    <p class="text-xs text-gray-500 font-bold uppercase">{% trans "AI Analyzed based on Seasonality, Current Trend & History" %}</p>
                 </div>
             </div>
 
@@ -57,29 +59,30 @@
                         </div>
                     </div>
                     <div class="text-right shrink-0">
-                        <span class="bg-white px-2 py-1 rounded text-xs font-black text-indigo-800 shadow-sm border border-indigo-100" title="Algorithm Score">Score: {{ item.score|floatformat:1 }}</span>
+                        <span class="bg-white px-2 py-1 rounded text-xs font-black text-indigo-800 shadow-sm border border-indigo-100" title="{% trans 'Algorithm Score' %}">{% trans "Score:" %} {{ item.score|floatformat:1 }}</span>
                     </div>
                 </div>
                 {% empty %}
-                <div class="col-span-3 text-center text-gray-500 py-4 font-medium">માસ્ટર રિપોર્ટ જનરેટ કરવા માટે પૂરતો ડેટા નથી. પેલા થોડા બિલ બનાવો.</div>
+                <div class="col-span-3 text-center text-gray-500 py-4 font-medium">{% trans "Not enough data to generate the Master Report. Please create some bills first." %}</div>
                 {% endfor %}
             </div>
             
             <p class="text-xs text-gray-500 mt-5 bg-gray-50 p-3 rounded-lg border border-gray-200">
-                <b>💡 Master Algorithm Logic:</b> આ લિસ્ટ પાછલા 30 દિવસના ટ્રેન્ડ, ગયા વર્ષના આખા ડેટા અને ખાસ કરીને <b>આવતા મહિનાના ({{ upcoming_month_name }})</b> ગયા વર્ષના ડેટાને ભેગો કરીને બનાવવામાં આવ્યું છે. નવો માલ ખરીદતી વખતે આ ટોપ 25 પ્રોડક્ટ્સનો સ્ટોક પૂરતો રાખવો.
+                <b>💡 {% trans "Master Algorithm Logic:" %}</b> 
+                {% blocktranslate %}This list is compiled by combining the past 30 days' trend, the complete data from last year, and specifically last year's data for the <b>upcoming month ({{ upcoming_month_name }})</b>. Ensure adequate stock of these top 25 products when purchasing new inventory.{% endblocktranslate %}
             </p>
         </div>
     </div>
 
     <!-- 3. INDIVIDUAL 5 REPORTS (Top 20 each) -->
-    <h3 class="text-xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">Individual Reports Breakdown (Top 20 Data)</h3>
+    <h3 class="text-xl font-bold text-gray-800 mt-10 mb-4 border-b pb-2">{% trans "Individual Reports Breakdown (Top 20 Data)" %}</h3>
     
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         
         <!-- Report 1 -->
         <div class="bg-white rounded-xl shadow-sm border border-orange-200 p-5">
             <h4 class="font-bold text-orange-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
-                <span class="material-icons text-sm">event_repeat</span> Upcoming Season ({{ upcoming_month_name }})
+                <span class="material-icons text-sm">event_repeat</span> {% trans "Upcoming Season" %} ({{ upcoming_month_name }})
             </h4>
             <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
                 {% for item in top_upcoming_last_year %}
@@ -88,7 +91,7 @@
                     <span class="font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400 text-xs">No Data Available</li>
+                <li class="text-gray-400 text-xs">{% trans "No Data Available" %}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -96,7 +99,7 @@
         <!-- Report 2 -->
         <div class="bg-white rounded-xl shadow-sm border border-blue-200 p-5">
             <h4 class="font-bold text-blue-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
-                <span class="material-icons text-sm">trending_up</span> Last 30 Days Trend
+                <span class="material-icons text-sm">trending_up</span> {% trans "Last 30 Days Trend" %}
             </h4>
             <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
                 {% for item in top_last_month %}
@@ -105,7 +108,7 @@
                     <span class="font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400 text-xs">No Data Available</li>
+                <li class="text-gray-400 text-xs">{% trans "No Data Available" %}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -113,7 +116,7 @@
         <!-- Report 3 -->
         <div class="bg-white rounded-xl shadow-sm border border-cyan-200 p-5">
             <h4 class="font-bold text-cyan-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
-                <span class="material-icons text-sm">pie_chart</span> Last Quarter (90 Days)
+                <span class="material-icons text-sm">pie_chart</span> {% trans "Last Quarter (90 Days)" %}
             </h4>
             <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
                 {% for item in top_last_quarter %}
@@ -122,7 +125,7 @@
                     <span class="font-bold text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400 text-xs">No Data Available</li>
+                <li class="text-gray-400 text-xs">{% trans "No Data Available" %}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -130,7 +133,7 @@
         <!-- Report 4 -->
         <div class="bg-white rounded-xl shadow-sm border border-emerald-200 p-5">
             <h4 class="font-bold text-emerald-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
-                <span class="material-icons text-sm">calendar_today</span> Current Year
+                <span class="material-icons text-sm">calendar_today</span> {% trans "Current Year" %}
             </h4>
             <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
                 {% for item in top_current_year %}
@@ -139,7 +142,7 @@
                     <span class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400 text-xs">No Data Available</li>
+                <li class="text-gray-400 text-xs">{% trans "No Data Available" %}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -147,7 +150,7 @@
         <!-- Report 5 -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-300 p-5">
             <h4 class="font-bold text-gray-700 text-sm uppercase mb-3 flex items-center gap-1 border-b pb-2">
-                <span class="material-icons text-sm">history</span> Last Year Complete
+                <span class="material-icons text-sm">history</span> {% trans "Last Year Complete" %}
             </h4>
             <ul class="space-y-3 h-64 overflow-y-auto pr-2 custom-scrollbar">
                 {% for item in top_last_year %}
@@ -156,7 +159,7 @@
                     <span class="font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded">{{ item.total_sold }}</span>
                 </li>
                 {% empty %}
-                <li class="text-gray-400 text-xs">No Data Available</li>
+                <li class="text-gray-400 text-xs">{% trans "No Data Available" %}</li>
                 {% endfor %}
             </ul>
         </div>

@@ -1,0 +1,1216 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-01 18:49+0530\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .\Templates\analysis.html:9
+msgid "Analytics & Buying Suggestions"
+msgstr ""
+
+#: .\Templates\analysis.html:10
+msgid "Smart Demand Forecasting System based on Machine Learning & Trends"
+msgstr ""
+
+#: .\Templates\analysis.html:18
+msgid "Total Revenue"
+msgstr ""
+
+#: .\Templates\analysis.html:25
+#, fuzzy
+#| msgid "Today's Net Profit"
+msgid "Total Net Profit"
+msgstr "আজকের নিট মুনাফা"
+
+#: .\Templates\analysis.html:32
+#, fuzzy
+#| msgid "Bills"
+msgid "Total Bills"
+msgstr "বিল"
+
+#: .\Templates\analysis.html:44
+msgid "Master Buying Suggestion (Top 25)"
+msgstr ""
+
+#: .\Templates\analysis.html:45
+msgid "AI Analyzed based on Seasonality, Current Trend & History"
+msgstr ""
+
+#: .\Templates\analysis.html:62
+msgid "Algorithm Score"
+msgstr ""
+
+#: .\Templates\analysis.html:62
+msgid "Score:"
+msgstr ""
+
+#: .\Templates\analysis.html:66
+msgid ""
+"Not enough data to generate the Master Report. Please create some bills "
+"first."
+msgstr ""
+
+#: .\Templates\analysis.html:71
+msgid "Master Algorithm Logic:"
+msgstr ""
+
+#: .\Templates\analysis.html:72
+#, python-format
+msgid ""
+"This list is compiled by combining the past 30 days' trend, the complete "
+"data from last year, and specifically last year's data for the <b>upcoming "
+"month (%(upcoming_month_name)s)</b>. Ensure adequate stock of these top 25 "
+"products when purchasing new inventory."
+msgstr ""
+
+#: .\Templates\analysis.html:78
+msgid "Individual Reports Breakdown (Top 20 Data)"
+msgstr ""
+
+#: .\Templates\analysis.html:85
+msgid "Upcoming Season"
+msgstr ""
+
+#: .\Templates\analysis.html:94 .\Templates\analysis.html:111
+#: .\Templates\analysis.html:128 .\Templates\analysis.html:145
+#: .\Templates\analysis.html:162
+msgid "No Data Available"
+msgstr ""
+
+#: .\Templates\analysis.html:102
+#, fuzzy
+#| msgid "Last 7 Days Revenue Trend"
+msgid "Last 30 Days Trend"
+msgstr "গত ৭ দিনের আয়ের প্রবণতা"
+
+#: .\Templates\analysis.html:119
+msgid "Last Quarter (90 Days)"
+msgstr ""
+
+#: .\Templates\analysis.html:136
+msgid "Current Year"
+msgstr ""
+
+#: .\Templates\analysis.html:153
+msgid "Last Year Complete"
+msgstr ""
+
+#: .\Templates\base.html:7
+msgid "SmartShop Manager"
+msgstr "স্মার্টশপ ম্যানেজার"
+
+#: .\Templates\base.html:33
+msgid "Dashboard"
+msgstr "ড্যাশবোর্ড"
+
+#: .\Templates\base.html:38
+msgid "Inventory"
+msgstr "ইনভেন্টরি (স্টক)"
+
+#: .\Templates\base.html:43
+msgid "Point of Sale"
+msgstr "পয়েন্ট অফ সেল (POS)"
+
+#: .\Templates\base.html:49
+msgid "Analysis"
+msgstr "অ্যানালিসিস"
+
+#: .\Templates\base.html:55
+msgid "Sales History"
+msgstr "বিক্রয়ের ইতিহাস"
+
+#: .\Templates\base.html:60
+msgid "Khata Book"
+msgstr "খাতা বুক (লেজার)"
+
+#: .\Templates\base.html:66 .\Templates\staff_management.html:5
+msgid "Staff Management"
+msgstr "স্টাফ ম্যানেজমেন্ট"
+
+#: .\Templates\base.html:71
+msgid "GST Tax Report"
+msgstr "GST ট্যাক্স রিপোর্ট"
+
+#: .\Templates\base.html:79 .\Templates\base.html:120
+msgid "Logout"
+msgstr "লগআউট"
+
+#: .\Templates\base.html:90
+msgid "Welcome"
+msgstr "স্বাগতম"
+
+#: .\Templates\base.html:117 .\Templates\profile.html:5
+msgid "My Profile"
+msgstr "আমার প্রোফাইল"
+
+#: .\Templates\edit_product.html:7 .\Templates\inventory.html:58
+msgid "Edit Product"
+msgstr "পণ্য এডিট করুন"
+
+#: .\Templates\edit_product.html:14 .\Templates\inventory.html:100
+msgid "Company Name"
+msgstr "কোম্পানির নাম"
+
+#: .\Templates\edit_product.html:18 .\Templates\inventory.html:104
+msgid "Product Type"
+msgstr "পণ্যের ধরন"
+
+#: .\Templates\edit_product.html:24
+#, fuzzy
+#| msgid "Model / Name"
+msgid "Product / Model Name"
+msgstr "মডেল / নাম"
+
+#: .\Templates\edit_product.html:30 .\Templates\inventory.html:137
+#: .\Templates\inventory.html:169 .\Templates\inventory.html:192
+msgid "Purchase Price"
+msgstr "ক্রয় মূল্য"
+
+#: .\Templates\edit_product.html:34 .\Templates\inventory.html:173
+msgid "Margin"
+msgstr "মার্জিন"
+
+#: .\Templates\edit_product.html:41
+msgid "Storage / RAM / Weight"
+msgstr ""
+
+#: .\Templates\edit_product.html:45
+msgid "Color / Size"
+msgstr ""
+
+#: .\Templates\edit_product.html:51 .\Templates\inventory.html:220
+#: .\Templates\khata.html:91
+msgid "Cancel"
+msgstr "বাতিল করুন"
+
+#: .\Templates\edit_product.html:52
+msgid "Update Data"
+msgstr ""
+
+#: .\Templates\gst_report.html:4
+#, fuzzy
+#| msgid "GST Tax Report"
+msgid "GST Tax Report - SmartShop"
+msgstr "GST ট্যাক্স রিপোর্ট"
+
+#: .\Templates\gst_report.html:5
+#, fuzzy
+#| msgid "GST Tax Report"
+msgid "GST Sales & Tax Report"
+msgstr "GST ট্যাক্স রিপোর্ট"
+
+#: .\Templates\gst_report.html:13
+msgid "GST Return Summary"
+msgstr ""
+
+#: .\Templates\gst_report.html:14
+msgid ""
+"Month or Date wise calculation of CGST and SGST collected from your "
+"customers."
+msgstr ""
+
+#: .\Templates\gst_report.html:20
+msgid "From Date"
+msgstr ""
+
+#: .\Templates\gst_report.html:24
+msgid "To Date"
+msgstr ""
+
+#: .\Templates\gst_report.html:28 .\Templates\sales_history.html:32
+msgid "Filter"
+msgstr ""
+
+#: .\Templates\gst_report.html:29
+msgid "Reset"
+msgstr ""
+
+#: .\Templates\gst_report.html:37
+msgid "Total Taxable Sales"
+msgstr ""
+
+#: .\Templates\gst_report.html:41
+#, fuzzy
+#| msgid "To Collect"
+msgid "Total CGST Collected"
+msgstr "পাওনা"
+
+#: .\Templates\gst_report.html:45
+#, fuzzy
+#| msgid "To Collect"
+msgid "Total SGST Collected"
+msgstr "পাওনা"
+
+#: .\Templates\gst_report.html:49
+msgid "Total Invoice Value"
+msgstr ""
+
+#: .\Templates\gst_report.html:57
+msgid "Invoice Tax Breakdown"
+msgstr ""
+
+#: .\Templates\gst_report.html:59
+#, fuzzy
+#| msgid "Point of Sale"
+msgid "Print / Save PDF"
+msgstr "পয়েন্ট অফ সেল (POS)"
+
+#: .\Templates\gst_report.html:66
+msgid "Inv #"
+msgstr ""
+
+#: .\Templates\gst_report.html:67 .\Templates\khata_detail.html:93
+#: .\Templates\print_invoice.html:68 .\Templates\sales_history.html:43
+msgid "Date"
+msgstr ""
+
+#: .\Templates\gst_report.html:68 .\Templates\khata.html:31
+#: .\Templates\khata.html:86 .\Templates\sales.html:19
+#: .\Templates\sales_history.html:44
+msgid "Customer Name"
+msgstr "গ্রাহকের নাম"
+
+#: .\Templates\gst_report.html:69 .\Templates\print_invoice.html:85
+msgid "GSTIN"
+msgstr ""
+
+#: .\Templates\gst_report.html:70
+msgid "Taxable Amt"
+msgstr ""
+
+#: .\Templates\gst_report.html:71 .\Templates\print_invoice.html:133
+#: .\Templates\sales.html:108
+msgid "CGST"
+msgstr "CGST"
+
+#: .\Templates\gst_report.html:72 .\Templates\print_invoice.html:129
+#: .\Templates\sales.html:104
+msgid "SGST"
+msgstr "SGST"
+
+#: .\Templates\gst_report.html:73
+msgid "Total Bill"
+msgstr ""
+
+#: .\Templates\gst_report.html:92
+msgid "No GST invoice records found."
+msgstr ""
+
+#: .\Templates\home.html:4
+msgid "Dashboard & Analytics - SmartShop"
+msgstr "ড্যাশবোর্ড এবং অ্যানালিসিস - স্মার্টশপ"
+
+#: .\Templates\home.html:5
+msgid "Analytics Dashboard"
+msgstr "অ্যানালিসিস ড্যাশবোর্ড"
+
+#: .\Templates\home.html:11
+msgid "Welcome back"
+msgstr "ফিরে আসার জন্য স্বাগতম"
+
+#: .\Templates\home.html:15
+msgid "Here is your business performance at a glance."
+msgstr "এখানে আপনার ব্যবসার পারফরম্যান্স একনজরে।"
+
+#: .\Templates\home.html:19
+msgid "New Bill"
+msgstr "নতুন বিল"
+
+#: .\Templates\home.html:27
+msgid "Today's Sales"
+msgstr "আজকের বিক্রয়"
+
+#: .\Templates\home.html:31
+msgid "Bills"
+msgstr "বিল"
+
+#: .\Templates\home.html:35
+msgid "Today's Net Profit"
+msgstr "আজকের নিট মুনাফা"
+
+#: .\Templates\home.html:39
+msgid "Pure Income"
+msgstr "বিশুদ্ধ আয়"
+
+#: .\Templates\home.html:43
+msgid "Monthly Sales"
+msgstr "এই মাসের বিক্রয়"
+
+#: .\Templates\home.html:47
+msgid "This Month (Total)"
+msgstr "এই মাসে (মোট)"
+
+#: .\Templates\home.html:51
+msgid "Monthly Profit"
+msgstr "এই মাসের মুনাফা"
+
+#: .\Templates\home.html:55
+msgid "This Month (Income)"
+msgstr "এই মাসে (আয়)"
+
+#: .\Templates\home.html:62
+msgid "Last 7 Days Revenue Trend"
+msgstr "গত ৭ দিনের আয়ের প্রবণতা"
+
+#: .\Templates\home.html:71
+msgid "Top Selling Products"
+msgstr "সবচেয়ে বেশি বিক্রি হওয়া পণ্য"
+
+#: .\Templates\home.html:77
+msgid "Sold"
+msgstr "বিক্রি হয়েছে"
+
+#: .\Templates\home.html:80
+msgid "No sales data this month."
+msgstr "এই মাসে কোনো বিক্রয়ের ডেটা নেই।"
+
+#: .\Templates\home.html:90
+msgid "Low Stock Alerts"
+msgstr "লো স্টক অ্যালার্ট"
+
+#: .\Templates\home.html:98
+msgid "Left"
+msgstr "বাকি আছে"
+
+#: .\Templates\home.html:102
+msgid "No low stock alerts!"
+msgstr "কোনো লো স্টক অ্যালার্ট নেই!"
+
+#: .\Templates\home.html:111
+msgid "Recent Sales"
+msgstr "সাম্প্রতিক বিক্রয়"
+
+#: .\Templates\home.html:113
+msgid "View All"
+msgstr "সব দেখুন"
+
+#: .\Templates\home.html:124
+msgid "No recent sales."
+msgstr "সাম্প্রতিক কোনো বিক্রয় নেই।"
+
+#: .\Templates\index.html:6
+#, fuzzy
+#| msgid "Point of Sale | SmartShop"
+msgid "Login | SmartShop"
+msgstr "পয়েন্ট অফ সেল | স্মার্টশপ"
+
+#: .\Templates\index.html:15
+msgid "Sign in to manage your store"
+msgstr ""
+
+#: .\Templates\index.html:29 .\Templates\registration.html:33
+#: .\Templates\staff_management.html:59
+msgid "Username"
+msgstr ""
+
+#: .\Templates\index.html:33 .\Templates\registration.html:66
+#: .\Templates\staff_management.html:38
+msgid "Password"
+msgstr ""
+
+#: .\Templates\index.html:37
+msgid "Sign In"
+msgstr ""
+
+#: .\Templates\index.html:42
+msgid "Don't have an account?"
+msgstr ""
+
+#: .\Templates\index.html:42
+msgid "Register here"
+msgstr ""
+
+#: .\Templates\inventory.html:7
+msgid "Stock & Inventory"
+msgstr "স্টক ও ইনভেন্টরি"
+
+#: .\Templates\inventory.html:10
+msgid "Add Product"
+msgstr "পণ্য যোগ করুন"
+
+#: .\Templates\inventory.html:19
+msgid "SKU / Code & SN"
+msgstr "SKU / কোড এবং SN"
+
+#: .\Templates\inventory.html:20
+msgid "Item Name & Details"
+msgstr "আইটেমের নাম এবং বিবরণ"
+
+#: .\Templates\inventory.html:21
+msgid "Category"
+msgstr "ক্যাটাগরি"
+
+#: .\Templates\inventory.html:22
+msgid "Stock Level"
+msgstr "স্টক লেভেল"
+
+#: .\Templates\inventory.html:23 .\Templates\print_invoice.html:97
+#: .\Templates\sales.html:88
+msgid "Price"
+msgstr "দাম"
+
+#: .\Templates\inventory.html:24
+msgid "Actions"
+msgstr "অ্যাকশন"
+
+#: .\Templates\inventory.html:33
+msgid "Barcode"
+msgstr "বারকোড"
+
+#: .\Templates\inventory.html:50
+msgid "Units"
+msgstr "ইউনিট"
+
+#: .\Templates\inventory.html:53
+msgid "Print Barcode Stickers"
+msgstr "বারকোড স্টিকার প্রিন্ট করুন"
+
+#: .\Templates\inventory.html:61
+msgid "Are you sure you want to delete this product?"
+msgstr "আপনি কি নিশ্চিত যে আপনি এই পণ্যটি মুছে ফেলতে চান?"
+
+#: .\Templates\inventory.html:63
+msgid "Delete Product"
+msgstr "পণ্য মুছে ফেলুন"
+
+#: .\Templates\inventory.html:68
+msgid "View Only"
+msgstr "শুধুমাত্র দেখুন"
+
+#: .\Templates\inventory.html:76
+msgid "No products found. Click 'Add Product' to add your first item!"
+msgstr "কোনো পণ্য পাওয়া যায়নি। প্রথম আইটেম যোগ করতে 'পণ্য যোগ করুন'-এ ক্লিক করুন!"
+
+#: .\Templates\inventory.html:89
+msgid "Add New Product"
+msgstr "নতুন পণ্য যোগ করুন"
+
+#: .\Templates\inventory.html:108
+msgid "Model / Name"
+msgstr "মডেল / নাম"
+
+#: .\Templates\inventory.html:115
+msgid "Select Product Type:"
+msgstr "পণ্যের ধরন নির্বাচন করুন:"
+
+#: .\Templates\inventory.html:119
+msgid "Serialized (Phone / Laptop)"
+msgstr "সিরিয়ালযুক্ত (ফোন / ল্যাপটপ)"
+
+#: .\Templates\inventory.html:123
+msgid "Non-Serialized (Accessories)"
+msgstr "সিরিয়ালবিহীন (অ্যাক্সেসরিজ)"
+
+#: .\Templates\inventory.html:130
+msgid "Item Details"
+msgstr "আইটেমের বিবরণ"
+
+#: .\Templates\inventory.html:143
+msgid "Add Another Item"
+msgstr "আরেকটি আইটেম যোগ করুন"
+
+#: .\Templates\inventory.html:149
+msgid "Common Margin"
+msgstr "কমন মার্জিন"
+
+#: .\Templates\inventory.html:158
+msgid "Size / Color"
+msgstr "আকার / রঙ"
+
+#: .\Templates\inventory.html:158 .\Templates\inventory.html:162
+#: .\Templates\khata.html:88 .\Templates\sales.html:27
+msgid "Optional"
+msgstr "ঐচ্ছিক"
+
+#: .\Templates\inventory.html:162
+msgid "Company Barcode"
+msgstr "কোম্পানির বারকোড"
+
+#: .\Templates\inventory.html:177
+msgid "Initial Stock / Qty"
+msgstr "প্রাথমিক স্টক / পরিমাণ"
+
+#: .\Templates\inventory.html:221
+msgid "Save Products / Add Stock"
+msgstr "পণ্য সেভ করুন / স্টক যোগ করুন"
+
+#: .\Templates\khata.html:5
+msgid "Khata Book - SmartShop"
+msgstr "খাতা বুক - স্মার্টশপ"
+
+#: .\Templates\khata.html:6
+msgid "Khata Book / Ledger"
+msgstr "খাতা বুক / লেজার"
+
+#: .\Templates\khata.html:16
+msgid "Total Outstanding"
+msgstr "মোট বকেয়া (মার্কেটে)"
+
+#: .\Templates\khata.html:22
+msgid "Add Customer"
+msgstr "গ্রাহক যোগ করুন"
+
+#: .\Templates\khata.html:32
+msgid "Phone"
+msgstr "ফোন"
+
+#: .\Templates\khata.html:33
+msgid "Balance"
+msgstr "বকেয়া ব্যালেন্স"
+
+#: .\Templates\khata.html:34 .\Templates\sales.html:90
+#: .\Templates\sales_history.html:47
+msgid "Action"
+msgstr "অ্যাকশন"
+
+#: .\Templates\khata.html:42
+msgid "Since"
+msgstr "অ্যাকাউন্ট খোলার তারিখ"
+
+#: .\Templates\khata.html:48 .\Templates\khata_detail.html:23
+msgid "To Collect"
+msgstr "পাওনা"
+
+#: .\Templates\khata.html:51
+msgid "To Pay"
+msgstr "দেনা"
+
+#: .\Templates\khata.html:54
+msgid "Settled"
+msgstr "হিসাব ক্লিয়ার"
+
+#: .\Templates\khata.html:59
+msgid "View Ledger"
+msgstr "হিসাব দেখুন"
+
+#: .\Templates\khata.html:67
+msgid "No customers found."
+msgstr "কোনো গ্রাহক পাওয়া যায়নি।"
+
+#: .\Templates\khata.html:80
+msgid "New Customer"
+msgstr "নতুন গ্রাহক"
+
+#: .\Templates\khata.html:87
+msgid "Phone Number"
+msgstr "ফোন নম্বর"
+
+#: .\Templates\khata.html:88
+msgid "Address"
+msgstr "ঠিকানা"
+
+#: .\Templates\khata.html:92
+msgid "Save"
+msgstr "সেভ করুন"
+
+#: .\Templates\khata_detail.html:4
+#, fuzzy
+#| msgid "Khata Book"
+msgid "Khata"
+msgstr "খাতা বুক (লেজার)"
+
+#: .\Templates\khata_detail.html:5
+#, fuzzy
+#| msgid "Customer Name"
+msgid "Customer Ledger"
+msgstr "গ্রাহকের নাম"
+
+#: .\Templates\khata_detail.html:20
+#, fuzzy
+#| msgid "Balance"
+msgid "Current Balance"
+msgstr "বকেয়া ব্যালেন্স"
+
+#: .\Templates\khata_detail.html:26
+msgid "Advance Paid"
+msgstr ""
+
+#: .\Templates\khata_detail.html:29
+#, fuzzy
+#| msgid "Settled"
+msgid "Account Settled"
+msgstr "হিসাব ক্লিয়ার"
+
+#: .\Templates\khata_detail.html:40
+#, fuzzy
+#| msgid "Add New Product"
+msgid "Add New Entry"
+msgstr "নতুন পণ্য যোগ করুন"
+
+#: .\Templates\khata_detail.html:52
+msgid "Given (Udhar)"
+msgstr ""
+
+#: .\Templates\khata_detail.html:53
+msgid "(Goods given / Due)"
+msgstr ""
+
+#: .\Templates\khata_detail.html:60
+msgid "Received (Jama)"
+msgstr ""
+
+#: .\Templates\khata_detail.html:61
+#, fuzzy
+#| msgid "Payment Mode"
+msgid "(Payment received)"
+msgstr "পেমেন্টের মাধ্যম"
+
+#: .\Templates\khata_detail.html:67 .\Templates\khata_detail.html:95
+msgid "Amount"
+msgstr ""
+
+#: .\Templates\khata_detail.html:72
+msgid "Description / Note"
+msgstr ""
+
+#: .\Templates\khata_detail.html:73
+msgid "e.g. Sold display, Received cash..."
+msgstr ""
+
+#: .\Templates\khata_detail.html:77
+msgid "Save Entry"
+msgstr ""
+
+#: .\Templates\khata_detail.html:87
+#, fuzzy
+#| msgid "Sales History"
+msgid "Transaction History"
+msgstr "বিক্রয়ের ইতিহাস"
+
+#: .\Templates\khata_detail.html:94
+msgid "Description"
+msgstr ""
+
+#: .\Templates\khata_detail.html:105
+msgid "Given"
+msgstr ""
+
+#: .\Templates\khata_detail.html:107
+msgid "Received"
+msgstr ""
+
+#: .\Templates\khata_detail.html:121
+#, fuzzy
+#| msgid "No customers found."
+msgid "No transactions found yet."
+msgstr "কোনো গ্রাহক পাওয়া যায়নি।"
+
+#: .\Templates\print_barcodes.html:7
+#, fuzzy
+#| msgid "Print Barcode Stickers"
+msgid "Print Barcodes"
+msgstr "বারকোড স্টিকার প্রিন্ট করুন"
+
+#: .\Templates\print_barcodes.html:74
+msgid "Print Labels (Thermal Printer)"
+msgstr ""
+
+#: .\Templates\print_barcodes.html:75 .\Templates\print_invoice.html:96
+#: .\Templates\sales.html:87
+msgid "Qty"
+msgstr "পরিমাণ"
+
+#: .\Templates\print_barcodes.html:78
+msgid "Close"
+msgstr ""
+
+#: .\Templates\print_barcodes.html:80
+msgid "Print"
+msgstr ""
+
+#: .\Templates\print_barcodes.html:80
+msgid "Labels"
+msgstr ""
+
+#: .\Templates\print_invoice.html:4
+#, fuzzy
+#| msgid "Generate Invoice"
+msgid "Invoice"
+msgstr "বিল তৈরি করুন"
+
+#: .\Templates\print_invoice.html:39 .\Templates\sales_history.html:13
+#, fuzzy
+#| msgid "New Bill"
+msgid "Create New Bill"
+msgstr "নতুন বিল"
+
+#: .\Templates\print_invoice.html:42
+msgid "Send on WhatsApp"
+msgstr ""
+
+#: .\Templates\print_invoice.html:45
+#, fuzzy
+#| msgid "Generate Invoice"
+msgid "Print Invoice"
+msgstr "বিল তৈরি করুন"
+
+#: .\Templates\print_invoice.html:57 .\Templates\print_invoice.html:168
+#, fuzzy
+#| msgid "Generate Invoice"
+msgid "Tax Invoice"
+msgstr "বিল তৈরি করুন"
+
+#: .\Templates\print_invoice.html:65
+msgid "INVOICE"
+msgstr ""
+
+#: .\Templates\print_invoice.html:67
+msgid "Invoice No"
+msgstr ""
+
+#: .\Templates\print_invoice.html:70
+#, fuzzy
+#| msgid "Payment Mode"
+msgid "Payment"
+msgstr "পেমেন্টের মাধ্যম"
+
+#: .\Templates\print_invoice.html:81
+msgid "Billed To"
+msgstr ""
+
+#: .\Templates\print_invoice.html:95
+#, fuzzy
+#| msgid "Item Details"
+msgid "Item Description"
+msgstr "আইটেমের বিবরণ"
+
+#: .\Templates\print_invoice.html:98
+#, fuzzy
+#| msgid "Grand Total"
+msgid "Total"
+msgstr "সর্বমোট"
+
+#: .\Templates\print_invoice.html:125
+msgid "Taxable Amount"
+msgstr ""
+
+#: .\Templates\print_invoice.html:130 .\Templates\print_invoice.html:134
+msgid "Applied"
+msgstr ""
+
+#: .\Templates\print_invoice.html:139 .\Templates\sales.html:114
+#: .\Templates\sales_history.html:46
+msgid "Grand Total"
+msgstr "সর্বমোট"
+
+#: .\Templates\print_invoice.html:147
+msgid "Terms & Conditions"
+msgstr ""
+
+#: .\Templates\print_invoice.html:148
+msgid "1. Goods once sold will not be taken back or exchanged."
+msgstr ""
+
+#: .\Templates\print_invoice.html:149
+msgid "2. Physical damage or liquid damage is not covered under warranty."
+msgstr ""
+
+#: .\Templates\print_invoice.html:150
+msgid "Thank you for your business!"
+msgstr ""
+
+#: .\Templates\print_invoice.html:170
+msgid "Hello"
+msgstr ""
+
+#: .\Templates\print_invoice.html:171
+msgid "Thank you for visiting our shop. Here are your bill details:"
+msgstr ""
+
+#: .\Templates\print_invoice.html:172
+#, fuzzy
+#| msgid "Bills"
+msgid "Bill No:"
+msgstr "বিল"
+
+#: .\Templates\print_invoice.html:173
+msgid "Date:"
+msgstr ""
+
+#: .\Templates\print_invoice.html:174
+msgid "Total Amount:"
+msgstr ""
+
+#: .\Templates\print_invoice.html:175
+#, fuzzy
+#| msgid "Payment Mode"
+msgid "Payment:"
+msgstr "পেমেন্টের মাধ্যম"
+
+#: .\Templates\print_invoice.html:178
+msgid "Note:"
+msgstr ""
+
+#: .\Templates\print_invoice.html:178
+msgid "This bill amount has been added to your Khata (Due)."
+msgstr ""
+
+#: .\Templates\print_invoice.html:181
+msgid "If you have any questions, feel free to contact us."
+msgstr ""
+
+#: .\Templates\print_invoice.html:182
+msgid "Have a great day!"
+msgstr ""
+
+#: .\Templates\profile.html:4
+#, fuzzy
+#| msgid "Point of Sale | SmartShop"
+msgid "My Profile - SmartShop"
+msgstr "পয়েন্ট অফ সেল | স্মার্টশপ"
+
+#: .\Templates\profile.html:25
+#, fuzzy
+#| msgid "Item Details"
+msgid "Edit Profile Details"
+msgstr "আইটেমের বিবরণ"
+
+#: .\Templates\profile.html:31
+#, fuzzy
+#| msgid "Customer Name"
+msgid "First Name"
+msgstr "গ্রাহকের নাম"
+
+#: .\Templates\profile.html:35
+#, fuzzy
+#| msgid "Customer Name"
+msgid "Last Name"
+msgstr "গ্রাহকের নাম"
+
+#: .\Templates\profile.html:41
+#, fuzzy
+#| msgid "Address"
+msgid "Email Address"
+msgstr "ঠিকানা"
+
+#: .\Templates\profile.html:47
+msgid "Business Category (Locked)"
+msgstr ""
+
+#: .\Templates\profile.html:52
+msgid ""
+"Business category cannot be changed due to security and inventory reasons."
+msgstr ""
+
+#: .\Templates\profile.html:57
+#, fuzzy
+#| msgid "My Profile"
+msgid "Update Profile"
+msgstr "আমার প্রোফাইল"
+
+#: .\Templates\profile.html:65
+msgid "Security / Password"
+msgstr ""
+
+#: .\Templates\profile.html:81
+msgid "Change Password"
+msgstr ""
+
+#: .\Templates\registration.html:7
+#, fuzzy
+#| msgid "Point of Sale | SmartShop"
+msgid "Register | SmartShop"
+msgstr "পয়েন্ট অফ সেল | স্মার্টশপ"
+
+#: .\Templates\registration.html:15 .\Templates\registration.html:76
+msgid "Create Account"
+msgstr ""
+
+#: .\Templates\registration.html:16
+msgid "Register your shop with SmartShop"
+msgstr ""
+
+#: .\Templates\registration.html:37
+msgid "Email"
+msgstr ""
+
+#: .\Templates\registration.html:43
+#, fuzzy
+#| msgid "Company Name"
+msgid "Shop Name"
+msgstr "কোম্পানির নাম"
+
+#: .\Templates\registration.html:49 .\Templates\sales.html:23
+msgid "Contact Number"
+msgstr "যোগাযোগের নম্বর"
+
+#: .\Templates\registration.html:54
+#, fuzzy
+#| msgid "Category"
+msgid "Business Category"
+msgstr "ক্যাটাগরি"
+
+#: .\Templates\registration.html:56
+msgid "General Store / Hardware / Other"
+msgstr ""
+
+#: .\Templates\registration.html:57
+msgid "Food / Pharmacy / FMCG"
+msgstr ""
+
+#: .\Templates\registration.html:58
+msgid "Electronics / Mobile / IT"
+msgstr ""
+
+#: .\Templates\registration.html:59
+msgid "Apparel / Footwear"
+msgstr ""
+
+#: .\Templates\registration.html:70
+msgid "Confirm Password"
+msgstr ""
+
+#: .\Templates\registration.html:81
+msgid "Already have an account?"
+msgstr ""
+
+#: .\Templates\registration.html:81
+msgid "Log in here"
+msgstr ""
+
+#: .\Templates\sales.html:4
+msgid "Point of Sale | SmartShop"
+msgstr "পয়েন্ট অফ সেল | স্মার্টশপ"
+
+#: .\Templates\sales.html:5
+msgid "Point of Sale (Billing)"
+msgstr "পয়েন্ট অফ সেল (বিলিং)"
+
+#: .\Templates\sales.html:16
+msgid "Customer Details"
+msgstr "গ্রাহকের বিবরণ"
+
+#: .\Templates\sales.html:27
+msgid "GST Number"
+msgstr "GST নম্বর"
+
+#: .\Templates\sales.html:35
+msgid "Add Item to Cart"
+msgstr "বিলে আইটেম যোগ করুন"
+
+#: .\Templates\sales.html:41
+msgid "Select Product / Scan"
+msgstr "পণ্য নির্বাচন করুন / স্ক্যান করুন"
+
+#: .\Templates\sales.html:43
+msgid "Search & Select"
+msgstr "সার্চ এবং সিলেক্ট করুন"
+
+#: .\Templates\sales.html:53 .\Templates\sales.html:164
+msgid "Scan Barcode / IMEI"
+msgstr "বারকোড / IMEI স্ক্যান করুন"
+
+#: .\Templates\sales.html:59
+msgid "Quantity"
+msgstr "পরিমাণ (Qty)"
+
+#: .\Templates\sales.html:72
+msgid "Add to Bill"
+msgstr "বিলে যোগ করুন"
+
+#: .\Templates\sales.html:86
+msgid "Item"
+msgstr "আইটেম"
+
+#: .\Templates\sales.html:89
+msgid "Subtotal"
+msgstr "মোট দাম"
+
+#: .\Templates\sales.html:123
+msgid "Payment Mode"
+msgstr "পেমেন্টের মাধ্যম"
+
+#: .\Templates\sales.html:128
+msgid "Cash"
+msgstr "নগদ (Cash)"
+
+#: .\Templates\sales.html:134
+msgid "UPI"
+msgstr "UPI"
+
+#: .\Templates\sales.html:140
+msgid "Card"
+msgstr "কার্ড"
+
+#: .\Templates\sales.html:146
+msgid "Udhar"
+msgstr "বাকি (উধার)"
+
+#: .\Templates\sales.html:154 .\Templates\sales.html:281
+msgid "Select Payment Mode..."
+msgstr "পেমেন্টের মাধ্যম নির্বাচন করুন..."
+
+#: .\Templates\sales.html:169
+msgid ""
+"Point your camera at the product barcode or IMEI. It will be added to the "
+"bill automatically."
+msgstr ""
+"পণ্যের বারকোড বা IMEI এর দিকে আপনার ক্যামেরা ধরুন। এটি স্বয়ংক্রিয়ভাবে বিলে যোগ "
+"হয়ে যাবে।"
+
+#: .\Templates\sales.html:257
+msgid "Product not found!"
+msgstr "পণ্য পাওয়া যায়নি!"
+
+#: .\Templates\sales.html:298
+msgid "Generate Invoice"
+msgstr "বিল তৈরি করুন"
+
+#: .\Templates\sales_history.html:4
+#, fuzzy
+#| msgid "Sales History"
+msgid "Sales History | SmartShop"
+msgstr "বিক্রয়ের ইতিহাস"
+
+#: .\Templates\sales_history.html:5 .\Templates\sales_history.html:11
+#, fuzzy
+#| msgid "Sales History"
+msgid "Sales History / Reports"
+msgstr "বিক্রয়ের ইতিহাস"
+
+#: .\Templates\sales_history.html:20
+msgid "Start Date"
+msgstr ""
+
+#: .\Templates\sales_history.html:24
+msgid "End Date"
+msgstr ""
+
+#: .\Templates\sales_history.html:28
+msgid "Search (Customer, Product, Bill No)"
+msgstr ""
+
+#: .\Templates\sales_history.html:29
+#, fuzzy
+#| msgid "Search & Select"
+msgid "Search here..."
+msgstr "সার্চ এবং সিলেক্ট করুন"
+
+#: .\Templates\sales_history.html:33
+msgid "Clear"
+msgstr ""
+
+#: .\Templates\sales_history.html:42
+#, fuzzy
+#| msgid "Bills"
+msgid "Bill No"
+msgstr "বিল"
+
+#: .\Templates\sales_history.html:45
+msgid "Items Sold"
+msgstr ""
+
+#: .\Templates\sales_history.html:67
+msgid "View / Print"
+msgstr ""
+
+#: .\Templates\sales_history.html:75
+msgid "No bills found matching your criteria."
+msgstr ""
+
+#: .\Templates\staff_management.html:4
+#, fuzzy
+#| msgid "Staff Management"
+msgid "Staff Management - SmartShop"
+msgstr "স্টাফ ম্যানেজমেন্ট"
+
+#: .\Templates\staff_management.html:12
+msgid "Manage Staff Accounts"
+msgstr ""
+
+#: .\Templates\staff_management.html:13
+msgid ""
+"Create new login IDs for your shop staff. Staff can only create bills, they "
+"cannot view profit or purchase prices."
+msgstr ""
+
+#: .\Templates\staff_management.html:21
+#, fuzzy
+#| msgid "Add New Product"
+msgid "Add New Staff"
+msgstr "নতুন পণ্য যোগ করুন"
+
+#: .\Templates\staff_management.html:27
+#, fuzzy
+#| msgid "Staff Management"
+msgid "Staff Name"
+msgstr "স্টাফ ম্যানেজমেন্ট"
+
+#: .\Templates\staff_management.html:28
+msgid "e.g. Ramesh"
+msgstr ""
+
+#: .\Templates\staff_management.html:32
+msgid "Login Username"
+msgstr ""
+
+#: .\Templates\staff_management.html:33
+msgid "e.g. ramesh123"
+msgstr ""
+
+#: .\Templates\staff_management.html:34
+msgid "Used for logging in (Do not use spaces)."
+msgstr ""
+
+#: .\Templates\staff_management.html:43
+msgid "Create Staff Account"
+msgstr ""
+
+#: .\Templates\staff_management.html:52
+msgid "Your Active Staff"
+msgstr ""
+
+#: .\Templates\staff_management.html:58
+msgid "Name"
+msgstr ""
+
+#: .\Templates\staff_management.html:60
+msgid "Status"
+msgstr ""
+
+#: .\Templates\staff_management.html:61
+msgid "Joined Date"
+msgstr ""
+
+#: .\Templates\staff_management.html:77
+#, fuzzy
+#| msgid "Action"
+msgid "Active"
+msgstr "অ্যাকশন"
+
+#: .\Templates\staff_management.html:85
+msgid "No staff accounts added yet."
+msgstr ""
+
+#: .\settings.py:118
+msgid "English"
+msgstr "English"
+
+#: .\settings.py:119
+msgid "Hindi"
+msgstr "हिंदी"
+
+#: .\settings.py:120
+msgid "Gujarati"
+msgstr "ગુજરાતી"
+
+#: .\settings.py:121
+msgid "Marathi"
+msgstr "मराठी"
+
+#: .\settings.py:122
+msgid "Bengali"
+msgstr "বাংলা"

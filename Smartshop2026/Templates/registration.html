@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+{% load i18n %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register | SmartShop</title>
+    <title>{% trans "Register | SmartShop" %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>body { font-family: 'Inter', sans-serif; }</style>
@@ -11,11 +12,11 @@
 <body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-lg border border-gray-100 my-8">
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold text-indigo-900 mb-2">Create Account</h1>
-            <p class="text-gray-500">Register your shop with SmartShop</p>
+            <h1 class="text-3xl font-bold text-indigo-900 mb-2">{% trans "Create Account" %}</h1>
+            <p class="text-gray-500">{% trans "Register your shop with SmartShop" %}</p>
         </div>
         
-        <!-- મેસેજ/એરર બતાવવા માટે -->
+        <!-- Messages/Errors -->
         {% if messages %}
             {% for msg in messages %}
                 <div class="mb-4 p-3 rounded-lg text-sm {% if msg.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
@@ -29,55 +30,55 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Username <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Username" %} <span class="text-red-500">*</span></label>
                     <input type="text" name="username" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Email" %} <span class="text-red-500">*</span></label>
                     <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Shop Name <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Shop Name" %} <span class="text-red-500">*</span></label>
                 <input type="text" name="shop_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contact Number <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Contact Number" %} <span class="text-red-500">*</span></label>
                     <input type="text" name="contact_no" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
-                <!-- નવું Business Category નું ડ્રોપડાઉન -->
+                <!-- Business Category Dropdown -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Business Category <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Business Category" %} <span class="text-red-500">*</span></label>
                     <select name="business_type" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                        <option value="General">General Store / Hardware / Other</option>
-                        <option value="Food">Food / Pharmacy / FMCG</option>
-                        <option value="Electronics">Electronics / Mobile / IT</option>
-                        <option value="Apparel">Apparel / Footwear</option>
+                        <option value="General">{% trans "General Store / Hardware / Other" %}</option>
+                        <option value="Food">{% trans "Food / Pharmacy / FMCG" %}</option>
+                        <option value="Electronics">{% trans "Electronics / Mobile / IT" %}</option>
+                        <option value="Apparel">{% trans "Apparel / Footwear" %}</option>
                     </select>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Password" %} <span class="text-red-500">*</span></label>
                     <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">{% trans "Confirm Password" %} <span class="text-red-500">*</span></label>
                     <input type="password" name="confirm_password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
             </div>
 
             <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition shadow-md mt-2">
-                Create Account
+                {% trans "Create Account" %}
             </button>
         </form>
         
         <p class="mt-6 text-center text-sm text-gray-600">
-            Already have an account? <a href="{% url 'index' %}" class="text-indigo-600 font-semibold hover:underline">Log in here</a>
+            {% trans "Already have an account?" %} <a href="{% url 'index' %}" class="text-indigo-600 font-semibold hover:underline">{% trans "Log in here" %}</a>
         </p>
     </div>
 </body>

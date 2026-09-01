@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 <!-- અહીં દુકાનદારનું નામ ડાયનેમિક આવશે -->
-{% block title %}Invoice #{{ invoice.id }} - {{ invoice.shop.shop_name }}{% endblock %}
+{% block title %}{% trans "Invoice" %} #{{ invoice.id }} - {{ invoice.shop.shop_name }}{% endblock %}
 
 {% block content %}
 <style>
@@ -35,13 +36,13 @@
     <!-- 🖲️ Action Buttons (પ્રિન્ટમાં નહિ દેખાય) -->
     <div class="flex justify-end gap-4 mb-6 no-print">
         <a href="{% url 'sales' %}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-2 rounded-lg font-bold flex items-center gap-2 transition">
-            <span class="material-icons text-sm">arrow_back</span> નવું બિલ બનાવો
+            <span class="material-icons text-sm">arrow_back</span> {% trans "Create New Bill" %}
         </a>
         <button onclick="shareWhatsApp()" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2 shadow-md transition">
-            <span class="material-icons text-sm">whatsapp</span> WhatsApp પર મોકલો
+            <span class="material-icons text-sm">whatsapp</span> {% trans "Send on WhatsApp" %}
         </button>
         <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-bold flex items-center gap-2 shadow-md transition">
-            <span class="material-icons text-sm">print</span> Print Invoice
+            <span class="material-icons text-sm">print</span> {% trans "Print Invoice" %}
         </button>
     </div>
 
@@ -53,7 +54,7 @@
             <div>
                 <!-- 🏪 ડાયનેમિક શોપનું નામ -->
                 <h1 class="text-4xl font-black text-indigo-900 uppercase tracking-wider">{{ invoice.shop.shop_name|default:"SHOP NAME" }}</h1>
-                <p class="text-xs font-bold text-gray-500 tracking-widest mt-1 uppercase">Tax Invoice</p>
+                <p class="text-xs font-bold text-gray-500 tracking-widest mt-1 uppercase">{% trans "Tax Invoice" %}</p>
                 
                 <div class="mt-4 text-sm text-gray-600 space-y-1">
                     <!-- જો ભવિષ્યમાં ShopUser મોડલમાં address અને phone ઉમેરો, તો અહી એડ કરી શકાય -->
@@ -61,12 +62,12 @@
                 </div>
             </div>
             <div class="text-right">
-                <h2 class="text-3xl font-bold text-gray-300 uppercase tracking-widest">INVOICE</h2>
+                <h2 class="text-3xl font-bold text-gray-300 uppercase tracking-widest">{% trans "INVOICE" %}</h2>
                 <div class="mt-4 text-sm text-gray-800 space-y-1">
-                    <p><span class="font-bold text-gray-500">Invoice No:</span> #{{ invoice.id|stringformat:"05d" }}</p>
-                    <p><span class="font-bold text-gray-500">Date:</span> {{ invoice.date|date:"d M Y" }}</p>
+                    <p><span class="font-bold text-gray-500">{% trans "Invoice No" %}:</span> #{{ invoice.id|stringformat:"05d" }}</p>
+                    <p><span class="font-bold text-gray-500">{% trans "Date" %}:</span> {{ invoice.date|date:"d M Y" }}</p>
                     <p>
-                        <span class="font-bold text-gray-500">Payment:</span> 
+                        <span class="font-bold text-gray-500">{% trans "Payment" %}:</span> 
                         <span class="font-bold {% if invoice.payment_mode == 'UNPAID' %}text-red-600{% else %}text-green-600{% endif %}">
                             {{ invoice.get_payment_mode_display }}
                         </span>
@@ -77,11 +78,11 @@
 
         <!-- Customer Details -->
         <div class="mb-8 p-4 bg-gray-50 rounded-lg border border-gray-100">
-            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Billed To:</h3>
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{% trans "Billed To" %}:</h3>
             <p class="text-lg font-bold text-gray-800">{{ invoice.customer_name }}</p>
             <p class="text-sm text-gray-600 mt-1">📞 +91 {{ invoice.contact_number }}</p>
             {% if invoice.gst_number %}
-                <p class="text-sm text-gray-600 mt-1">GSTIN: <span class="font-bold">{{ invoice.gst_number }}</span></p>
+                <p class="text-sm text-gray-600 mt-1">{% trans "GSTIN" %}: <span class="font-bold">{{ invoice.gst_number }}</span></p>
             {% endif %}
         </div>
 
@@ -91,10 +92,10 @@
                 <thead class="bg-gray-800 text-white text-xs uppercase tracking-wider">
                     <tr>
                         <th class="p-3 font-semibold w-12 text-center">#</th>
-                        <th class="p-3 font-semibold">Item Description</th>
-                        <th class="p-3 font-semibold text-center">Qty</th>
-                        <th class="p-3 font-semibold text-right">Price</th>
-                        <th class="p-3 font-semibold text-right">Total</th>
+                        <th class="p-3 font-semibold">{% trans "Item Description" %}</th>
+                        <th class="p-3 font-semibold text-center">{% trans "Qty" %}</th>
+                        <th class="p-3 font-semibold text-right">{% trans "Price" %}</th>
+                        <th class="p-3 font-semibold text-right">{% trans "Total" %}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 text-sm">
@@ -121,21 +122,21 @@
                 
                 {% if invoice.sgst_percentage > 0 or invoice.cgst_percentage > 0 %}
                 <div class="flex justify-between text-sm text-gray-600 px-3">
-                    <span>Taxable Amount:</span>
+                    <span>{% trans "Taxable Amount" %}:</span>
                     <span>₹{{ invoice.grand_total|add:"-0" }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-600 px-3">
-                    <span>SGST ({{ invoice.sgst_percentage }}%):</span>
-                    <span>Applied</span>
+                    <span>{% trans "SGST" %} ({{ invoice.sgst_percentage }}%):</span>
+                    <span>{% trans "Applied" %}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-600 px-3 border-b border-gray-200 pb-3">
-                    <span>CGST ({{ invoice.cgst_percentage }}%):</span>
-                    <span>Applied</span>
+                    <span>{% trans "CGST" %} ({{ invoice.cgst_percentage }}%):</span>
+                    <span>{% trans "Applied" %}</span>
                 </div>
                 {% endif %}
 
                 <div class="flex justify-between items-center bg-indigo-50 p-4 rounded-lg border border-indigo-100">
-                    <span class="text-lg font-bold text-indigo-900 uppercase">Grand Total:</span>
+                    <span class="text-lg font-bold text-indigo-900 uppercase">{% trans "Grand Total" %}:</span>
                     <span class="text-2xl font-black text-indigo-700">₹{{ invoice.grand_total }}</span>
                 </div>
             </div>
@@ -143,10 +144,10 @@
 
         <!-- Footer / Terms -->
         <div class="mt-12 pt-6 border-t border-gray-200 text-xs text-gray-500 text-center">
-            <p class="font-bold text-gray-600 mb-1">Terms & Conditions:</p>
-            <p>1. Goods once sold will not be taken back or exchanged.</p>
-            <p>2. Physical damage or liquid damage is not covered under warranty.</p>
-            <p class="mt-4 text-indigo-400 font-bold italic">Thank you for your business!</p>
+            <p class="font-bold text-gray-600 mb-1">{% trans "Terms & Conditions" %}:</p>
+            <p>{% trans "1. Goods once sold will not be taken back or exchanged." %}</p>
+            <p>{% trans "2. Physical damage or liquid damage is not covered under warranty." %}</p>
+            <p class="mt-4 text-indigo-400 font-bold italic">{% trans "Thank you for your business!" %}</p>
         </div>
         
     </div>
@@ -163,21 +164,22 @@
         
         let shopName = "{{ invoice.shop.shop_name|default:'Shop'|escapejs }}";
         
-        let text = `*${shopName.toUpperCase()} - Tax Invoice*\n`;
+        // Translating WhatsApp message content using Django template tags
+        let text = `*${shopName.toUpperCase()} - {% trans "Tax Invoice" %}*\n`;
         text += `--------------------------------------\n\n`;
-        text += `નમસ્તે *${ '{{ invoice.customer_name }}' }*,\n\n`;
-        text += `અમારી દુકાનની મુલાકાત લેવા બદલ આભાર. તમારું બિલ નીચે મુજબ છે:\n\n`;
-        text += `🧾 *બિલ નંબર:* #${ '{{ invoice.id }}' }\n`;
-        text += `📅 *તારીખ:* ${ '{{ invoice.date|date:"d M Y" }}' }\n`;
-        text += `💰 *કુલ રકમ:* ₹${ '{{ invoice.grand_total }}' }\n`;
-        text += `💳 *પેમેન્ટ:* ${ '{{ invoice.get_payment_mode_display }}' }\n\n`;
+        text += `{% trans "Hello" %} *${ '{{ invoice.customer_name }}' }*,\n\n`;
+        text += `{% trans "Thank you for visiting our shop. Here are your bill details:" %}\n\n`;
+        text += `🧾 *{% trans "Bill No:" %}* #${ '{{ invoice.id }}' }\n`;
+        text += `📅 *{% trans "Date:" %}* ${ '{{ invoice.date|date:"d M Y" }}' }\n`;
+        text += `💰 *{% trans "Total Amount:" %}* ₹${ '{{ invoice.grand_total }}' }\n`;
+        text += `💳 *{% trans "Payment:" %}* ${ '{{ invoice.get_payment_mode_display }}' }\n\n`;
         
         {% if invoice.payment_mode == 'UNPAID' %}
-        text += `⚠️ *નોંધ:* આ બિલની રકમ ખાતાવહીમાં બાકી તરીકે નોંધવામાં આવી છે.\n\n`;
+        text += `⚠️ *{% trans "Note:" %}* {% trans "This bill amount has been added to your Khata (Due)." %}\n\n`;
         {% endif %}
         
-        text += `જો તમને કોઈ પ્રશ્ન હોય, તો અમારો સંપર્ક કરી શકો છો.\n`;
-        text += `આપનો દિવસ શુભ રહે! 🙏`;
+        text += `{% trans "If you have any questions, feel free to contact us." %}\n`;
+        text += `{% trans "Have a great day!" %} 🙏`;
         
         let url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
