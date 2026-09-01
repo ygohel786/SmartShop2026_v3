@@ -23,8 +23,8 @@ class Product(models.Model):
     color = models.CharField(max_length=50, blank=True, null=True)
     
     # સિસ્ટમનો પોતાનો યુનિક કોડ (SN / SKU)
-    serial_number = models.CharField(max_length=100, unique=True, blank=True, null=True)
-    
+    serial_number = models.CharField(max_length=100, blank=True, null=True)
+        
     # 🆕 નવી કોલમ: કંપનીના ઓરિજિનલ બારકોડ (EAN/UPC) માટે 
     company_barcode = models.CharField(max_length=100, blank=True, null=True, help_text="કંપનીનો EAN/UPC બારકોડ")
     
@@ -32,7 +32,12 @@ class Product(models.Model):
     
     purchase_price = models.DecimalField(max_digits=10, decimal_places=2)
     margin_percentage = models.DecimalField(max_digits=5, decimal_places=2)
-    
+
+    # 🛑 SaaS સિક્યુરિટી ફિક્સ: 
+    # આનાથી સીરીયલ નંબર માત્ર એ દુકાન માટે જ યુનિક રહેશે, આખા ડેટાબેઝ માટે નહિ.
+    class Meta:
+        unique_together = ('shop', 'serial_number')
+
     @property
     def selling_price(self):
         margin_amount = (self.purchase_price * self.margin_percentage) / 100

@@ -13,6 +13,7 @@ import os
 from google.cloud import vision
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import ProtectedError
 
 # તમારો GCP કી પાથ અહી સેટ કરો
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "path/to/your/credentials.json"
@@ -302,6 +303,8 @@ def delete_product(request, product_id):
         product = Product.objects.get(id=product_id, shop=shop_owner)
         product.delete()
         messages.success(request, f"{product.name} removed successfully.")
+    except ProtectedError:
+        messages.error(request, "❌ આ પ્રોડક્ટના બિલ બની ગયા હોવાથી તેને ડિલીટ કરી શકાશે નહિ. (સ્ટોક 0 કરી શકો છો).")
     except Exception as e:
         messages.error(request, "Error removing product.")
     return redirect('inventory')

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum, F, DecimalField
@@ -16,6 +16,8 @@ from Inventory.models import Product, Invoice, InvoiceItem
 # ==========================================
 @login_required
 def analysis(request):
+    if getattr(request.user, 'is_shop_staff', False):
+        return redirect('sales')
     user = request.user
     today = timezone.now().date()
     
@@ -109,6 +111,10 @@ def analysis(request):
 # ==========================================
 @login_required
 def overall(request):
+    # 🛑 સિક્યુરિટી: સ્ટાફ આ API નો ડેટા ના જોઈ શકે 
+    if getattr(request.user, 'is_shop_staff', False):
+        return JsonResponse({"error": "Unauthorized Access. Only owners can view analytics."}, status=403)
+
     items = InvoiceItem.objects.filter(invoice__shop=request.user).values(
         'product__name', 'product__category__name', 'quantity', 'selling_price', 'invoice__date'
     )
