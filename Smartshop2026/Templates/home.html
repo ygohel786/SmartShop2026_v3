@@ -1,23 +1,18 @@
 {% extends 'base.html' %}
-{% block title %}Dashboard - SmartShop{% endblock %}
-
-{% block header_title %}Dashboard{% endblock %}
+{% block title %}Dashboard & Analytics - SmartShop{% endblock %}
+{% block header_title %}Analytics Dashboard{% endblock %}
 
 {% block content %}
-<div class="space-y-6 animate-fade-in-up">
+<div class="space-y-6 animate-fade-in-up max-w-7xl mx-auto">
     
     <!-- Welcome Section -->
     <div class="flex justify-between items-end">
         <div>
             <h2 class="text-3xl font-black text-gray-800 tracking-tight">Welcome back, {{ request.user.username|title }}! 👋</h2>
-            
-            <!-- અહી તારીખ અને વાર ઉમેર્યા છે -->
             <p class="text-indigo-600 font-bold mt-2 text-sm flex items-center gap-1">
-                <span class="material-icons text-sm">calendar_month</span> 
-                {% now "l, d F Y" %}
+                <span class="material-icons text-sm">calendar_month</span> {% now "l, d F Y" %}
             </p>
-            
-            <p class="text-gray-500 mt-1">Here is what's happening in your shop today.</p>
+            <p class="text-gray-500 mt-1">Here is your business performance at a glance.</p>
         </div>
         <div>
             <a href="{% url 'sales' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow-md transition font-bold flex items-center gap-2">
@@ -26,58 +21,83 @@
         </div>
     </div>
 
-    
-    <!-- Top Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Today's Revenue -->
-        <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-6 text-white flex items-center gap-4 transform hover:-translate-y-1 transition duration-300">
-            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <span class="material-icons text-4xl">account_balance_wallet</span>
+    <!-- 💰 4 Smart Cards (Revenue & Profit) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- 1. Today's Sales -->
+        <div class="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow p-5 text-white flex flex-col justify-between transform hover:-translate-y-1 transition duration-300">
+            <div class="flex justify-between items-start">
+                <p class="text-green-100 text-xs font-bold uppercase tracking-wider">Today's Sales</p>
+                <div class="p-2 bg-white/20 rounded-lg"><span class="material-icons text-xl">store</span></div>
             </div>
-            <div>
-                <p class="text-green-100 text-sm font-bold uppercase tracking-wider">Today's Sales</p>
-                <h3 class="text-3xl font-black">₹{{ todays_revenue|floatformat:2 }}</h3>
-            </div>
+            <h3 class="text-3xl font-black mt-2">₹{{ todays_revenue|floatformat:2 }}</h3>
+            <p class="text-xs text-green-100 mt-2">Bills: {{ todays_bills_count }}</p>
         </div>
 
-        <!-- Today's Bills -->
-        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg p-6 text-white flex items-center gap-4 transform hover:-translate-y-1 transition duration-300">
-            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <span class="material-icons text-4xl">receipt_long</span>
+        <!-- 2. Today's Profit -->
+        <div class="bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl shadow p-5 text-white flex flex-col justify-between transform hover:-translate-y-1 transition duration-300">
+            <div class="flex justify-between items-start">
+                <p class="text-amber-100 text-xs font-bold uppercase tracking-wider">Today's Net Profit</p>
+                <div class="p-2 bg-white/20 rounded-lg"><span class="material-icons text-xl">savings</span></div>
             </div>
-            <div>
-                <p class="text-blue-100 text-sm font-bold uppercase tracking-wider">Today's Bills</p>
-                <h3 class="text-3xl font-black">{{ todays_bills_count }}</h3>
-            </div>
+            <h3 class="text-3xl font-black mt-2">₹{{ todays_profit|floatformat:2 }}</h3>
+            <p class="text-xs text-amber-100 mt-2">Pure Income (આજનો નફો)</p>
         </div>
 
-        <!-- Total Products -->
-        <div class="bg-gradient-to-br from-purple-500 to-fuchsia-600 rounded-2xl shadow-lg p-6 text-white flex items-center gap-4 transform hover:-translate-y-1 transition duration-300">
-            <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <span class="material-icons text-4xl">inventory_2</span>
+        <!-- 3. Monthly Sales -->
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow p-5 text-white flex flex-col justify-between transform hover:-translate-y-1 transition duration-300">
+            <div class="flex justify-between items-start">
+                <p class="text-blue-100 text-xs font-bold uppercase tracking-wider">Monthly Sales</p>
+                <div class="p-2 bg-white/20 rounded-lg"><span class="material-icons text-xl">insert_chart</span></div>
             </div>
-            <div>
-                <p class="text-purple-100 text-sm font-bold uppercase tracking-wider">Total Products</p>
-                <h3 class="text-3xl font-black">{{ total_products }}</h3>
+            <h3 class="text-3xl font-black mt-2">₹{{ monthly_revenue|floatformat:2 }}</h3>
+            <p class="text-xs text-blue-100 mt-2">This Month (Total)</p>
+        </div>
+
+        <!-- 4. Monthly Profit -->
+        <div class="bg-gradient-to-br from-purple-500 to-fuchsia-600 rounded-2xl shadow p-5 text-white flex flex-col justify-between transform hover:-translate-y-1 transition duration-300">
+            <div class="flex justify-between items-start">
+                <p class="text-purple-100 text-xs font-bold uppercase tracking-wider">Monthly Profit</p>
+                <div class="p-2 bg-white/20 rounded-lg"><span class="material-icons text-xl">account_balance_wallet</span></div>
             </div>
+            <h3 class="text-3xl font-black mt-2">₹{{ monthly_profit|floatformat:2 }}</h3>
+            <p class="text-xs text-purple-100 mt-2">This Month (Income)</p>
         </div>
     </div>
 
-    <!-- 📊 Sales Trend Chart (નવો ઉમેરેલો ભાગ) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mt-6">
-        <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+    <!-- 📊 Graph & Top Products Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- 7 Days Chart (2/3 width) -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <span class="material-icons text-indigo-600">insights</span> Last 7 Days Revenue Trend
             </h3>
+            <div class="h-64 w-full">
+                <canvas id="salesChart"></canvas>
+            </div>
         </div>
-        <!-- અહી ગ્રાફ દેખાશે -->
-        <div class="h-64 w-full">
-            <canvas id="salesChart"></canvas>
+
+        <!-- 🏆 Top Selling Products (1/3 width) -->
+        <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="bg-yellow-50 p-4 border-b border-yellow-100 flex items-center gap-2">
+                <span class="material-icons text-yellow-600">military_tech</span>
+                <h3 class="text-lg font-bold text-yellow-900">Top Selling Products</h3>
+            </div>
+            <ul class="divide-y divide-gray-100">
+                {% for item in top_products %}
+                <li class="p-4 flex justify-between items-center hover:bg-gray-50 transition">
+                    <span class="font-bold text-gray-700 text-sm">{{ item.product__name }}</span>
+                    <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-black">{{ item.total_sold }} Sold</span>
+                </li>
+                {% empty %}
+                <li class="p-6 text-center text-gray-400 text-sm">No sales data this month.</li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 
     <!-- Main Grid: Alerts & History -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- ⚠️ Low Stock Alerts -->
         <div class="bg-white rounded-2xl shadow-sm border border-red-100 overflow-hidden">
@@ -85,35 +105,20 @@
                 <span class="material-icons text-red-600">warning</span>
                 <h3 class="text-lg font-bold text-red-900">Low Stock Alerts</h3>
             </div>
-            <div class="p-0">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold">Product Name</th>
-                            <th class="px-4 py-3 font-semibold text-center">Current Stock</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        {% for product in low_stock_products %}
-                        <tr class="hover:bg-red-50/30 transition">
-                            <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ product.name }} <span class="text-xs text-gray-400 font-normal block">{{ product.company_name }}</span></td>
-                            <td class="px-4 py-3 text-center">
-                                <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-black">
-                                    {{ product.current_stock }} Left
-                                </span>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="2" class="p-6 text-center text-gray-500 text-sm font-medium">
-                                <span class="material-icons text-green-500 text-3xl block mb-2">check_circle</span>
-                                બધા જ પ્રોડક્ટ્સનો સ્ટોક પૂરતો છે!
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <table class="w-full text-left">
+                <tbody class="divide-y divide-gray-100">
+                    {% for product in low_stock_products %}
+                    <tr class="hover:bg-red-50/30 transition">
+                        <td class="px-4 py-3 text-sm font-bold text-gray-800">{{ product.name }}</td>
+                        <td class="px-4 py-3 text-right">
+                            <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-black">{{ product.current_stock }} Left</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="2" class="p-6 text-center text-gray-500 text-sm">બધા જ પ્રોડક્ટ્સનો સ્ટોક પૂરતો છે!</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
         <!-- 🧾 Recent Sales (Last 5 Bills) -->
@@ -125,50 +130,34 @@
                 </div>
                 <a href="{% url 'sales_history' %}" class="text-xs font-bold text-indigo-600 hover:underline">View All</a>
             </div>
-            <div class="p-0">
-                <table class="w-full text-left">
-                    <thead class="bg-gray-50 text-gray-500 text-xs uppercase">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold">Bill No</th>
-                            <th class="px-4 py-3 font-semibold">Customer</th>
-                            <th class="px-4 py-3 font-semibold text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        {% for invoice in recent_sales %}
-                        <tr class="hover:bg-indigo-50/30 transition">
-                            <td class="px-4 py-3 text-sm font-mono font-bold text-indigo-600">#{{ invoice.id|stringformat:"04d" }}</td>
-                            <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ invoice.customer_name }}</td>
-                            <td class="px-4 py-3 text-sm font-black text-green-600 text-right">₹{{ invoice.total_amount }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="3" class="p-6 text-center text-gray-500 text-sm font-medium">
-                                હજુ સુધી કોઈ બિલ બનાવ્યું નથી.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            <table class="w-full text-left">
+                <tbody class="divide-y divide-gray-100">
+                    {% for invoice in recent_sales %}
+                    <tr class="hover:bg-indigo-50/30 transition cursor-pointer" onclick="window.location.href='{% url 'print_invoice' invoice.id %}'">
+                        <td class="px-4 py-3 text-sm font-mono font-bold text-indigo-600">#{{ invoice.id|stringformat:"04d" }}</td>
+                        <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ invoice.customer_name }}</td>
+                        <td class="px-4 py-3 text-sm font-black text-green-600 text-right">₹{{ invoice.grand_total }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" class="p-6 text-center text-gray-500 text-sm">હજુ સુધી કોઈ બિલ બનાવ્યું નથી.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
     </div>
 </div>
 
-<!-- Chart.js લાઈબ્રેરી -->
+<!-- Chart.js Library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- જાવાસ્ક્રિપ્ટ ગ્રાફ દોરવા માટે -->
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // બેકએન્ડમાંથી આવેલો ડેટા (જો ડેટા ન હોય તો ખાલી એરે આપશે)
         const dates = {{ chart_dates|safe|default:"[]" }};
         const revenues = {{ chart_revenues|safe|default:"[]" }};
         
         if(dates.length > 0 && revenues.length > 0) {
             const ctx = document.getElementById('salesChart').getContext('2d');
-            
             new Chart(ctx, {
                 type: 'line', 
                 data: {
@@ -176,7 +165,7 @@
                     datasets: [{
                         label: 'Daily Revenue (₹)',
                         data: revenues,
-                        borderColor: '#4f46e5', // Indigo color
+                        borderColor: '#4f46e5',
                         backgroundColor: 'rgba(79, 70, 229, 0.1)',
                         borderWidth: 3,
                         pointBackgroundColor: '#ffffff',
@@ -184,35 +173,16 @@
                         pointBorderWidth: 2,
                         pointRadius: 4,
                         fill: true,
-                        tension: 0.4 // વળાંક (curve) આપવા માટે
+                        tension: 0.4
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1f2937',
-                            padding: 10,
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) {
-                                    return '₹ ' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: '#f3f4f6', drawBorder: false },
-                            ticks: { font: { family: 'Inter' } }
-                        },
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { family: 'Inter' } }
-                        }
+                        y: { beginAtZero: true, grid: { color: '#f3f4f6' } },
+                        x: { grid: { display: false } }
                     }
                 }
             });
@@ -221,9 +191,7 @@
 </script>
 
 <style>
-    .animate-fade-in-up {
-        animation: fadeInUp 0.4s ease-out;
-    }
+    .animate-fade-in-up { animation: fadeInUp 0.4s ease-out; }
     @keyframes fadeInUp {
         from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }

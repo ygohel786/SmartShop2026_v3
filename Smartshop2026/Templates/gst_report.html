@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}GST Tax Report - SmartShop{% endblock %}
+{% block header_title %}GST Sales & Tax Report{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Top Bar & Filters -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div>
+            <h2 class="text-xl font-black text-gray-800">📊 GST Return Summary</h2>
+            <p class="text-gray-500 text-sm mt-0.5">તમારા ગ્રાહકો પાસેથી ઉઘરાવેલ CGST અને SGST નો મહિનો કે તારીખ મુજબનો હિસાબ.</p>
+        </div>
+        
+        <!-- Filter Form -->
+        <form method="GET" class="flex items-center gap-3 w-full md:w-auto">
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-gray-400">From Date</label>
+                <input type="date" name="start_date" value="{{ start_date }}" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500">
+            </div>
+            <div>
+                <label class="block text-[10px] uppercase font-bold text-gray-400">To Date</label>
+                <input type="date" name="end_date" value="{{ end_date }}" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:border-indigo-500">
+            </div>
+            <div class="flex items-end gap-2 mt-4">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-1.5 rounded-lg text-sm transition">Filter</button>
+                <a href="{% url 'gst_report' %}" class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold px-3 py-1.5 rounded-lg text-sm transition">Reset</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <span class="text-xs font-bold text-gray-400 uppercase">Total Taxable Sales</span>
+            <h3 class="text-2xl font-black text-gray-800 mt-1">₹{{ total_taxable_amount|floatformat:2 }}</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <span class="text-xs font-bold text-indigo-500 uppercase">Total CGST Collected</span>
+            <h3 class="text-2xl font-black text-indigo-600 mt-1">₹{{ total_cgst_collected|floatformat:2 }}</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+            <span class="text-xs font-bold text-blue-500 uppercase">Total SGST Collected</span>
+            <h3 class="text-2xl font-black text-blue-600 mt-1">₹{{ total_sgst_collected|floatformat:2 }}</h3>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm bg-indigo-50/40">
+            <span class="text-xs font-bold text-indigo-700 uppercase">Total Invoice Value</span>
+            <h3 class="text-2xl font-black text-indigo-900 mt-1">₹{{ total_grand_total|floatformat:2 }}</h3>
+        </div>
+    </div>
+
+    <!-- Table Data -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="font-bold text-gray-700">Invoice Tax Breakdown</h3>
+            <button onclick="window.print()" class="bg-gray-800 hover:bg-gray-900 text-white px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5">
+                <span class="material-icons text-sm">print</span> Print / Save PDF
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left whitespace-nowrap">
+                <thead class="bg-gray-50/50 text-gray-500 text-xs uppercase border-b">
+                    <tr>
+                        <th class="px-6 py-3 font-semibold">Inv #</th>
+                        <th class="px-6 py-3 font-semibold">Date</th>
+                        <th class="px-6 py-3 font-semibold">Customer Name</th>
+                        <th class="px-6 py-3 font-semibold">GSTIN</th>
+                        <th class="px-6 py-3 font-semibold text-right">Taxable Amt (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">CGST (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">SGST (₹)</th>
+                        <th class="px-6 py-3 font-semibold text-right">Total Bill (₹)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm">
+                    {% for row in report_data %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-3 font-mono font-bold text-indigo-600">#{{ row.invoice.id }}</td>
+                        <td class="px-6 py-3 text-gray-500">{{ row.invoice.date|date:"d M Y" }}</td>
+                        <td class="px-6 py-3 font-medium text-gray-800">{{ row.invoice.customer_name }}</td>
+                        <td class="px-6 py-3 font-mono text-xs text-gray-500">{{ row.invoice.gst_number|default:"-" }}</td>
+                        <td class="px-6 py-3 text-right text-gray-700">₹{{ row.taxable|floatformat:2 }}</td>
+                        <td class="px-6 py-3 text-right text-indigo-600 font-medium">₹{{ row.cgst|floatformat:2 }}</td>
+                        <td class="px-6 py-3 text-right text-blue-600 font-medium">₹{{ row.sgst|floatformat:2 }}</td>
+                        <td class="px-6 py-3 text-right font-bold text-gray-900">₹{{ row.total|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="p-8 text-center text-gray-400">
+                            <span class="material-icons text-4xl block mb-2 opacity-50">receipt_long</span>
+                            કોઈ જીએસટી રેકોર્ડ મળ્યો નથી.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -23,4 +23,5 @@ urlpatterns = [
     path('khata/add-customer/', views.add_khata_customer, name='add_khata_customer'),
     path('khata/<int:customer_id>/', views.khata_detail, name='khata_detail'),
     path('khata/<int:customer_id>/add-transaction/', views.add_khata_transaction, name='add_khata_transaction'),
+    path('reports/gst/', views.gst_report_view, name='gst_report'),
 ]

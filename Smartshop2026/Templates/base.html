@@ -48,10 +48,12 @@
                 <span>Point of Sale</span>
             </a>
 
+            {% if not request.user.is_shop_staff %}
             <a href="{% url 'analysis' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'analysis' %}bg-indigo-800{% endif %}">
                 <span class="material-icons">analytics</span>
                 <span>Analysis</span>
             </a>
+            {% endif %}
             
             <a href="{% url 'sales_history' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'sales_history' %}bg-indigo-800{% endif %}">
                 <!-- અહી receipt_long આઇકન વાપર્યો છે જે બિલ હિસ્ટ્રી માટે બેસ્ટ છે -->
@@ -63,6 +65,21 @@
                 <span class="material-icons">menu_book</span>
                 <span>Khata Book (ખાતાવહી)</span>
             </a>
+
+            <!-- 👨‍💼 સ્ટાફ મેનેજમેન્ટ (માત્ર માલિક માટે) -->
+            {% if not request.user.is_shop_staff %}
+            <a href="{% url 'staff_management' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'staff_management' %}bg-indigo-800{% endif %}">
+                <span class="material-icons">manage_accounts</span>
+                <span>Staff Management</span>
+            </a>
+            {% endif %}
+
+            {% if not request.user.is_shop_staff %}
+            <a href="{% url 'gst_report' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg transition hover:bg-indigo-800 {% if request.resolver_match.url_name == 'gst_report' %}bg-indigo-800{% endif %}">
+                <span class="material-icons">receipt</span>
+                <span>GST Tax Report</span>
+            </a>
+            {% endif %}
         </nav>
 
         <div class="p-4 border-t border-indigo-800">
