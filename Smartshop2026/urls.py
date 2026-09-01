@@ -6,6 +6,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     
+    # 🆕 ભાષા બદલવા માટેનો પાથ
+    path('i18n/', include('django.conf.urls.i18n')),
+    
     # Account અને Inventory ના પાથ ડાયરેક્ટ ચાલશે
     path('', include('Account.urls')),
     path('', include('Inventory.urls')),
